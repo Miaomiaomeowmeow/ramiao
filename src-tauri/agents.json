@@ -1,0 +1,258 @@
+[
+  {
+    "id": "codex",
+    "name": "Codex",
+    "env": [
+      "CODEX_THREAD_ID",
+      "CODEX_CI",
+      "CODEX_SANDBOX"
+    ],
+    "threadEnv": "CODEX_THREAD_ID",
+    "nameIndex": "~/.codex/session_index.jsonl",
+    "linkEnv": "CODEX_THREAD_ID",
+    "link": "codex://threads/{id}",
+    "cliNote": "会打断它正在做的事；对话记录还在，在终端里输入 codex resume 就能接着聊",
+    "cliNoteEn": "Interrupts what it is doing; the chat is kept — run codex resume in a terminal to continue",
+    "conv": [
+      {
+        "exe": [
+          "codex"
+        ],
+        "notArgs": [
+          "app-server",
+          "mcp-server",
+          "login",
+          "logout"
+        ]
+      }
+    ],
+    "host": [
+      {
+        "exe": [
+          "codex"
+        ],
+        "args": [
+          "app-server"
+        ]
+      }
+    ],
+    "app": [
+      {
+        "path": [
+          "openai.codex"
+        ]
+      }
+    ],
+    "appName": "Codex 桌面版",
+    "appNameEn": "Codex app"
+  },
+  {
+    "id": "gemini",
+    "name": "Gemini CLI",
+    "env": [
+      "GEMINI_CLI"
+    ],
+    "conv": [
+      {
+        "exe": [
+          "gemini"
+        ]
+      },
+      {
+        "args": [
+          "gemini-cli"
+        ]
+      }
+    ],
+    "app": [
+      {
+        "path": [
+          "google/gemini/"
+        ]
+      }
+    ],
+    "appName": "Gemini 桌面版",
+    "appNameEn": "Gemini app"
+  },
+  {
+    "id": "cursor",
+    "name": "Cursor",
+    "env": [
+      "CURSOR_AGENT"
+    ],
+    "aiAgent": [
+      "cursor"
+    ],
+    "conv": [
+      {
+        "exe": [
+          "cursor-agent"
+        ]
+      }
+    ],
+    "app": [
+      {
+        "exe": [
+          "cursor"
+        ]
+      }
+    ],
+    "appName": "Cursor"
+  },
+  {
+    "id": "opencode",
+    "name": "OpenCode",
+    "env": [
+      "OPENCODE_CLIENT"
+    ],
+    "aiAgent": [
+      "opencode"
+    ],
+    "conv": [
+      {
+        "exe": [
+          "opencode"
+        ]
+      },
+      {
+        "args": [
+          "opencode-ai"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "copilot",
+    "name": "Copilot CLI",
+    "env": [
+      "COPILOT_MODEL",
+      "COPILOT_ALLOW_ALL"
+    ],
+    "aiAgent": [
+      "github-copilot"
+    ],
+    "conv": [
+      {
+        "exe": [
+          "copilot"
+        ]
+      },
+      {
+        "args": [
+          "@github/copilot"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment",
+    "name": "Augment",
+    "env": [
+      "AUGMENT_AGENT"
+    ],
+    "aiAgent": [
+      "augment"
+    ],
+    "conv": [
+      {
+        "exe": [
+          "auggie"
+        ]
+      },
+      {
+        "args": [
+          "@augmentcode/auggie"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "antigravity",
+    "name": "Antigravity",
+    "env": [
+      "ANTIGRAVITY_AGENT"
+    ],
+    "aiAgent": [
+      "antigravity"
+    ],
+    "app": [
+      {
+        "exe": [
+          "antigravity"
+        ]
+      }
+    ],
+    "appName": "Antigravity"
+  },
+  {
+    "id": "aider",
+    "name": "aider",
+    "aiAgent": [
+      "aider"
+    ],
+    "conv": [
+      {
+        "exe": [
+          "aider"
+        ]
+      },
+      {
+        "exe": [
+          "python",
+          "pythonw"
+        ],
+        "args": [
+          "aider"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "claude-code",
+    "name": "Claude Code",
+    "env": [
+      "CLAUDECODE"
+    ],
+    "aiAgent": [
+      "claude-code",
+      "claude"
+    ],
+    "nameEnv": "CLAUDE_CODE_SESSION_NAME",
+    "sessionEnv": "CLAUDE_CODE_SESSION_ID",
+    "titleDir": "CLAUDE_CONFIG_DIR|~/.claude",
+    "titleFile": "projects/*/{id}.jsonl",
+    "titleKey": "customTitle",
+    "linkEnv": "CLAUDE_CODE_HOST_SESSION_ID",
+    "link": "claude://claude.ai/epitaxy/{id}",
+    "endNote": "会打断它正在做的事；对话还在侧栏，点开再发一句就能接着聊",
+    "endNoteEn": "Interrupts what it is doing; the chat stays in the sidebar — open it and send a message to continue",
+    "cliNote": "会打断它正在做的事；对话记录还在，在终端里输入 claude --resume 就能接着聊",
+    "cliNoteEn": "Interrupts what it is doing; the chat is kept — run claude --resume in a terminal to continue",
+    "conv": [
+      {
+        "path": [
+          "claude-code",
+          "/claude/versions/"
+        ]
+      },
+      {
+        "args": [
+          "@anthropic-ai/claude-code"
+        ]
+      }
+    ],
+    "app": [
+      {
+        "exe": [
+          "claude"
+        ],
+        "path": [
+          "/windowsapps/claude_",
+          "claude.app/"
+        ]
+      }
+    ],
+    "appName": "Claude App",
+    "appNameEn": "Claude app"
+  }
+]

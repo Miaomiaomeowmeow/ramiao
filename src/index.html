@@ -1,0 +1,725 @@
+<!doctype html>
+<!-- RAMeow 内存喵 — by Miaomiao (github.com/Miaomiaomeowmeow) · CC BY-NC-SA 4.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAMeow</title>
+<style>@font-face{font-family:"Saira";src:url("fonts/saira.woff2") format("woff2");font-weight:100 900;font-stretch:50% 125%;font-display:swap}</style>
+<style>
+:root{--ease:cubic-bezier(.2,.8,.2,1);--spring:cubic-bezier(.32,1.3,.42,1);--wide:"Saira","Noto Sans SC",sans-serif;--txt:"Noto Sans SC","Microsoft YaHei UI",sans-serif}
+body[data-m="g"]{--page:#1C201F;--b1:#3A403E;--b2:#272C2A;--scr:#111513;--dot:rgba(255,255,255,.055);--ink:#E9EFEB;--sub:#8F9994;--dim:#5B6460;--off:rgba(255,255,255,.07);--c1:#F3F6F4;--c2:#CDD3D0;--c3:#A9B1AD;--c4:#8A938F;--c5:#6F7874;--oth:rgba(255,255,255,.2);--sys:rgba(255,255,255,.34);--acc:#FF8A2A;--ok:#46E3B0;--k1:#4A504E;--k2:#323735;--kwall:#191D1C;--klip:rgba(0,0,0,.35);--khi:rgba(255,255,255,.13);--shadow:0 30px 70px rgba(0,0,0,.55),0 8px 18px rgba(0,0,0,.35);--hov:rgba(255,255,255,.045)}
+body[data-m="w"]{--page:#E7E7E4;--b1:#FAFAF9;--b2:#ECECEA;--scr:#DFE0DE;--dot:rgba(0,0,0,.03);--ink:#1C1E1D;--sub:#6C706E;--dim:#A2A5A3;--off:rgba(0,0,0,.08);--c1:#1E2120;--c2:#3C413F;--c3:#5C625F;--c4:#7E8481;--c5:#9DA29F;--oth:rgba(0,0,0,.2);--sys:rgba(0,0,0,.34);--acc:#E5542A;--ok:#1E2120;--k1:#FFFFFF;--k2:#EFEFED;--kwall:#C9C9C5;--klip:rgba(0,0,0,.08);--khi:#fff;--shadow:0 30px 60px rgba(40,40,35,.16),0 8px 16px rgba(40,40,35,.08);--hov:rgba(0,0,0,.035)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;overflow:hidden;background:radial-gradient(70% 60% at 50% 15%,color-mix(in srgb,var(--page) 86%,#fff 14%),var(--page));color:var(--ink);font:13px/1.45 var(--txt);user-select:none}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.38s}
+.w{font-family:var(--wide);font-stretch:118%;font-variant-numeric:tabular-nums}
+.tag{font-family:var(--wide);font-stretch:125%;font-weight:600;font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--dim)}
+.scr{position:relative;background:var(--scr);border-radius:12px;box-shadow:inset 0 2px 6px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.03),0 1px 0 rgba(255,255,255,.06)}
+body[data-m="w"] .scr{box-shadow:inset 0 2px 5px rgba(0,0,0,.13),inset 0 0 0 1px rgba(0,0,0,.04),0 1px 0 #fff}
+.scr::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(var(--dot) .7px,transparent .9px) 0 0/4px 4px;pointer-events:none}
+.scr>*{position:relative}
+/* 厚按键：顶面高光 + 下唇 + 侧壁厚度 + 落地阴影；按下整块下沉 */
+.key{position:relative;border:0;cursor:pointer;font:500 12px var(--txt);color:var(--ink);background:linear-gradient(180deg,var(--k1),var(--k2));border-radius:10px;box-shadow:inset 0 1px 0 var(--khi),inset 0 -2px 0 var(--klip),0 3px 0 var(--kwall),0 6px 10px rgba(0,0,0,.35);transform:translateY(0);transition:transform .09s,box-shadow .09s,color .2s}
+body[data-m="w"] .key{box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 var(--klip),0 3px 0 var(--kwall),0 6px 12px rgba(0,0,0,.10)}
+.key:active,.key.down,.key.latched{transform:translateY(2px);box-shadow:inset 0 1px 0 var(--khi),inset 0 -1px 0 var(--klip),0 1px 0 var(--kwall),0 2px 4px rgba(0,0,0,.22)}
+.key.latched{color:var(--acc)}
+#dev{position:fixed;top:16px;left:50%;width:208px;height:64px;transform:translateX(-50%);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,var(--b1),var(--b2));box-shadow:inset 0 1px 0 var(--khi),inset 0 -1px 0 rgba(0,0,0,.4),var(--shadow);cursor:pointer}
+#dev.open{cursor:default}
+#mini{position:absolute;left:6px;right:6px;top:6px}
+#mini .scr{height:32px;display:flex;align-items:center;gap:9px;padding:0 12px;overflow:hidden;white-space:nowrap}
+#mPct{font-size:21px;font-weight:300;line-height:1}
+#mInfo{font-size:12px;color:var(--sub);opacity:0;transition:opacity .15s;overflow:hidden;text-overflow:ellipsis}
+#mInfo b{color:var(--ink);font-weight:500}
+#dev.long #mInfo{opacity:1;transition:opacity .25s .08s}
+.led{width:7px;height:7px;border-radius:50%;background:var(--st,var(--acc));box-shadow:0 0 7px var(--st,var(--acc));flex:none}
+body.blink .led{opacity:.3}
+#panel{position:absolute;left:0;top:0;width:360px;padding:12px 12px 10px;opacity:0;pointer-events:none}
+#dev.open #panel{pointer-events:auto}
+.hd{display:flex;align-items:center;justify-content:space-between;padding:0 2px 10px 8px;cursor:pointer}
+.hd .t{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--sub)}
+.hd .t b{color:var(--ink);font-weight:500}
+.hb{display:flex;gap:8px}
+.x{width:30px;height:28px;display:grid;place-items:center}
+.x svg{width:13px;height:13px}
+#gear svg{transition:transform .6s var(--spring)}
+#gear.latched svg{transform:rotate(90deg)}
+/* 设置：从标题下面往下滑出 */
+#set{display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s var(--ease)}
+#set.on{grid-template-rows:1fr}
+.setIn{overflow:hidden;min-height:0}
+.setIn>*{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .35s var(--spring)}
+.setIn>:last-child{margin-bottom:10px}
+#set.on .setIn>*{opacity:1;transform:none}
+#set.on .setIn>:nth-child(2){transition-delay:.05s}
+#set.on .setIn>:nth-child(n+3){transition-delay:.1s}
+.sr{display:flex;align-items:center;justify-content:space-between;height:40px;padding:0 4px 0 8px;border-radius:10px}
+.sr.flash{animation:flash 1.2s var(--ease)}
+@keyframes flash{0%,60%{background:color-mix(in srgb,var(--acc) 14%,transparent)}}
+.seg{display:flex;gap:7px}
+.seg .key{padding:6px 12px 6px 10px;min-width:62px;text-align:left}
+.seg .key::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:7px;vertical-align:1px;background:var(--off);transition:background .2s,box-shadow .2s}
+.seg .key.latched::before{background:var(--acc);box-shadow:0 0 6px var(--acc)}
+.seg.sm .key{min-width:0;padding:5px 9px 5px 8px}
+.aist{display:flex;gap:7px;margin:0 4px 4px 8px;font-size:11.5px;line-height:1.5;color:var(--sub)}
+.aist:has(#aiTxt:empty){display:none}
+.aist i{flex:none;width:6px;height:6px;margin-top:6px;border-radius:50%;background:var(--dim)}
+.aist.on i{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+body[data-m="w"] .aist.on i{background:#2FA36B;box-shadow:0 0 6px #2FA36B}
+/* 自己的 API：一套就够，没有多套预设 */
+#apiF{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
+#apiF.on{grid-template-rows:1fr}
+#apiF>div{overflow:hidden;min-height:0}
+.fr{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:8px;align-items:center;padding:4px 4px 4px 8px;font-size:11.5px;color:var(--sub)}
+.fr>.fld:last-child{grid-column:2/-1}
+.fld{width:100%;min-width:0;height:28px;border:0;border-radius:8px;padding:0 9px;background:var(--scr);color:var(--ink);font:12px var(--txt);box-shadow:inset 0 2px 4px rgba(0,0,0,.16);outline:none;user-select:text;appearance:none}
+.fld:focus{box-shadow:inset 0 2px 4px rgba(0,0,0,.16),0 0 0 1.5px var(--acc)}
+.key.sm{padding:5px 10px;font-size:11.5px}
+#tRow{display:none}
+#tRow.on{display:grid}
+#fMsg{grid-column:1/3;color:var(--sub)}
+#fMsg.ok{color:#2FA36B}
+#fMsg.bad{color:var(--acc)}
+.main{padding:14px 16px}
+.big b{font-size:44px;font-weight:200;line-height:1;letter-spacing:.5px}
+.big span{font-size:12px;color:var(--sub);margin-left:6px}
+#bar{display:grid;grid-template-columns:repeat(32,1fr);gap:3px;height:22px;margin-top:14px;position:relative;cursor:pointer}
+#bar .c{border-radius:1.5px;background:var(--off);transition:background .35s var(--ease),opacity .25s,transform .2s}
+#bar.focus .c:not(.hl){opacity:.18}
+#bar .c.hl{transform:scaleY(1.12)}
+#bar .c.drain{background:var(--off)!important;transition:background .12s}
+body[data-m="g"] #bar .c.lit{box-shadow:0 0 5px rgba(255,255,255,.12)}
+#tipBox{position:absolute;bottom:30px;left:0;padding:4px 8px;border-radius:7px;background:var(--ink);color:var(--scr);font-size:11.5px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:3}
+#tipBox.on{opacity:1}
+.scale{display:flex;justify-content:space-between;margin-top:6px}
+.info{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--sub)}
+.info b{color:var(--ink);font-weight:500}
+.q{display:inline-grid;place-items:center;width:18px;height:17px;margin-left:6px;font:600 10px var(--txt);border-radius:6px;cursor:help;position:relative}
+.q .pop{position:absolute;right:-8px;top:26px;width:260px;padding:12px 14px;border-radius:12px;background:var(--scr);color:var(--ink);box-shadow:0 14px 30px rgba(0,0,0,.4);font:12px/1.65 var(--txt);text-align:left;opacity:0;transform:translateY(-4px);pointer-events:none;transition:.2s;z-index:6}
+.q .pop{display:none}
+#qFloat{position:fixed;z-index:50;width:260px;padding:12px 14px;border-radius:12px;background:var(--scr);color:var(--ink);box-shadow:0 14px 30px rgba(0,0,0,.28);font:12px/1.65 var(--txt);opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .18s,transform .18s}
+#qFloat.on{opacity:1;transform:none}
+#qFloat b{color:var(--acc);font-weight:500}
+.pop b{color:var(--acc);font-weight:500}
+.pop.up{top:auto;bottom:28px;left:-10px;right:auto}
+.pop .key{margin-top:8px;padding:5px 10px;pointer-events:auto}
+/* AI 建议：平时一行滚动字幕（像 Winamp 滚歌名），点一下展开全文 + 去看 */
+.tip{margin-top:10px;padding:7px 10px 7px 12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;font-size:12px;line-height:1.5;cursor:pointer}
+.tk{overflow:hidden;white-space:nowrap}
+.tip.scroll .tk{-webkit-mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 18px),transparent);mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 18px),transparent)}
+#tipTxt{display:inline-block}
+#tipTxt>span{display:inline-block;padding-right:40px}
+.tip:not(.scroll) #tipTxt>.dup,.tip.open #tipTxt>.dup{display:none}
+.tip.scroll:not(.open) #tipTxt{animation:tick var(--dur,12s) linear infinite}
+.tip:hover #tipTxt{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.tip.open .tk{white-space:normal;padding:4px 0}
+.tip.open #tipTxt>span{display:inline;padding-right:0}
+.ta{display:flex;gap:8px;align-items:center}
+.tip:not(.open) #tipGo{display:none}
+#askB{min-width:68px;padding:5px 10px;text-align:center}
+.tip>.ai,.tip>.ta{align-self:start} /* 「问 AI」和「返回」钉在右上角，问完不挪位置，鼠标不用动 */
+.tip>.ai{min-height:27px}
+#askB{color:var(--acc)}
+#askB[hidden]{display:none}
+.tip.asking #tipTxt{color:var(--sub)}
+#plan{grid-column:1/-1;display:none}
+#plan.on{display:block}
+.pi{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 2px;border-top:1px solid var(--off);font-size:12.5px;cursor:pointer}
+.pi .bx{width:15px;height:15px;border-radius:4px;box-shadow:inset 0 0 0 1.5px var(--dim);display:grid;place-items:center;font-size:10px;color:transparent;transition:background .15s}
+.pi.on .bx{background:var(--acc);box-shadow:none;color:#fff}
+.pi.nokill{cursor:default}
+.pi.nokill .bx{opacity:.3}
+.pi .pn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi small{color:var(--sub);margin-left:6px;font-size:11.5px}
+.pf{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;border-top:1px solid var(--off)}
+.pd{margin:8px 2px 2px;color:var(--sub);font-size:12px;line-height:1.65;white-space:pre-wrap;user-select:text}
+.tip:not(.open) #plan{display:none}
+.raw{color:var(--sub);font-size:11.5px;cursor:pointer;white-space:nowrap}
+.rawT{display:none;color:var(--sub);font-size:11.5px;line-height:1.55;padding:8px 2px 0;white-space:pre-wrap;word-break:break-all;max-height:120px;overflow:auto;user-select:text}
+#plan.raw-on .rawT{display:block}
+.tip .ai{display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--wide);font-stretch:125%;font-weight:600;font-size:9.5px;letter-spacing:1.4px;color:var(--ok)}
+body[data-m="w"] .tip .ai{color:var(--acc)}
+#tipTxt{transition:opacity .2s,transform .3s var(--ease)}
+#tipTxt.think{color:var(--sub)}
+.tip .key{padding:5px 11px}
+.tip .q{width:18px;height:18px;margin:0;padding:0;border-radius:6px;font:600 10px/1 var(--txt);letter-spacing:0;color:var(--ink)}
+/* 详细列表：高度跟着往下拉的距离走，拉到哪一行，哪一行才长出来 */
+#detail{position:relative;overflow:hidden;height:0}
+#detail.scroll{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--dim) transparent}
+.lh{display:none} /* 不写「谁在占 · LIVE」：多余的字 */
+#list{margin-top:10px}
+.row{border-radius:12px;overflow:hidden;opacity:0;transform:translateY(-8px) scale(.98);transition:opacity .25s,transform .35s var(--spring),background .2s}
+.row.in{opacity:1;transform:none}
+.row.gone{opacity:0!important;transform:translateX(14px)!important}
+.row:hover,.row.open{background:var(--hov)}
+.ln{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:8px 8px 10px;cursor:pointer;font-size:13px}
+.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.nm small{color:var(--sub);font-weight:400;font-size:12px;margin-left:5px}
+.nm em{font-style:normal;font-size:12px;color:var(--acc);margin-left:8px;font-weight:400}
+.v{font-size:15px}
+.v small{font:400 11px var(--txt);color:var(--sub);margin-left:3px}
+.ticks{grid-column:1/-1;display:grid;grid-template-columns:repeat(32,1fr);gap:3px;height:3px}
+.ticks i{border-radius:1px;background:transparent;transition:background .35s}
+.row:hover .ticks i:not(.on){background:var(--off)}
+.more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--spring)}
+.row.open .more{grid-template-rows:1fr}
+.more>div{overflow:hidden}
+.dt{padding:0 8px 12px;color:var(--sub);font-size:12px}
+.dt p{margin:2px 0 10px}
+.acts{display:flex;gap:10px}
+.acts .key{padding:7px 13px}
+.hold{overflow:hidden;color:var(--acc)!important}
+.hold::before{content:'';position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--acc) 22%,transparent);clip-path:inset(0 calc(100% - var(--p,0)*100%) 0 0);pointer-events:none}
+.hold i{position:absolute;left:8px;right:8px;bottom:4px;height:2px;border-radius:1px;background:var(--acc);box-shadow:0 0 8px var(--acc);transform:scaleX(var(--p,0));transform-origin:left}
+.parts{margin:-4px 0 10px}
+.cat{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:6px 6px;border-radius:8px;font-size:12.5px;color:var(--ink)}
+.cat .n{color:var(--sub);font-size:11.5px}
+.cat .look{color:var(--dim);font-size:11px;min-width:30px;text-align:right}
+.cat.go{background:color-mix(in srgb,var(--acc) 9%,transparent);cursor:pointer}
+.cat.go .look{color:var(--acc);font-size:14px}
+.cat.vo{cursor:pointer}
+.cat.vo:hover{background:var(--hov)}
+.hint{margin:0 6px 6px;color:var(--sub)}
+.sub{margin:4px 0 6px 10px;padding-left:10px;border-left:2px solid color-mix(in srgb,var(--acc) 40%,transparent)}
+.warn{color:var(--acc);font-size:11.5px;margin:2px 0 6px}
+.cc{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:5px 0;font-size:12px;border-top:1px solid var(--off)}
+.cc .t{color:var(--ink)}
+.cc .s{display:block;color:var(--sub);font-size:11px}
+.cc .s.live{color:var(--acc)}
+.cc .key{padding:4px 9px;font-size:11px}
+.mine{display:inline-block;margin-left:4px;padding:0 6px;border-radius:6px;background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc);font-size:10.5px}
+.morec{color:var(--sub);font-size:11.5px;padding:5px 0 0;cursor:pointer}
+.parts .done{padding:6px 0;font-size:12px}
+.done{padding:11px 8px;color:var(--ok);font-weight:500;display:flex;gap:8px;align-items:center}
+/* 底边按钮：点一下看详细 / 收起详细；长按全部收起 */
+.ft{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:12px 8px 2px;font-size:11.5px;color:var(--sub)}
+#ftT{visibility:hidden} /* 「每 3 秒更新 / 你在看，先停住」不写，位置留着让 ⌄ 居中 */
+#moreB{width:54px;height:20px;padding:0;border-radius:9px;display:grid;place-items:center;overflow:hidden}
+#moreB svg{width:12px;height:12px;transition:transform .45s var(--spring)}
+#moreB.up svg{transform:rotate(180deg)}
+#moreB:hover{color:var(--acc)}
+#moreB i{position:absolute;left:7px;right:7px;bottom:3px;height:2px;border-radius:1px;background:var(--acc);box-shadow:0 0 6px var(--acc);transform:scaleX(var(--p,0));transform-origin:left}
+#gHint{justify-self:end;white-space:nowrap}
+body.alarm .led{background:#E5342A;box-shadow:0 0 8px #E5342A}
+body.alarm #mPct{color:#E5342A;font-weight:400}
+#mInfo .gw{color:#E5342A;font-weight:500}
+.nm em.mb{color:var(--sub)}
+.nm small.sb{display:block;margin:2px 0 0;font-size:11.5px}
+.nm small.sb.live{color:var(--acc)}
+.sr{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 8px;border-radius:9px;font-size:13px}
+.sr .nm small{margin-left:8px}
+.sr .nm em{margin-left:6px}
+.sr.go{cursor:pointer}
+.sr:hover,.cv:hover{background:var(--hov)}
+.cv{border-radius:9px}
+.cv .sr:hover{background:none}
+.hvb{position:absolute!important;right:6px;top:0;bottom:0;margin:auto 0;height:max-content;visibility:hidden;padding:4px 10px!important;font-size:11.5px}
+.sr:hover .hvb{visibility:visible}
+.sr:hover:has(.hvb) .v{visibility:hidden}
+.sub3{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:0 8px 7px 14px;font-size:12px;color:var(--sub)}
+.sub3 .key{padding:3px 9px;font-size:11px}
+.risk{display:none;margin:-2px 8px 4px;font-size:11px;color:var(--acc)}
+.sr:has(.hvb:hover)+.risk,.orow:has(.hold:hover)+.risk,.sub3:has(.hold:hover)+.risk,.sr:has(.hold.down)+.risk{display:block}
+.hvs{position:absolute;right:6px;top:0;bottom:0;margin:auto 0;height:max-content;display:flex;gap:6px;visibility:hidden}
+.hvs .key{padding:4px 10px;font-size:11.5px}
+.sr:hover .hvs{visibility:visible}
+.sr:hover:has(.hvs) .v{visibility:hidden}
+.sr:hover:has(.hvs) .nm{min-width:0;margin-right:var(--kw,168px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap} /* 鼠标放上去：名字给右边的键让位，放不下用省略号 */
+.sr:hover:has(.hvs) .syl{display:none}
+.sr:has(.hvs .hold:hover)+.risk,.sr:has(.hvs .hold.down)+.risk{display:block}
+.sub3{position:relative}
+.sub3{grid-template-columns:minmax(0,1fr) auto}
+.sub3 .hvs{bottom:7px}
+.sub3:hover .hvs{visibility:visible}
+.sub3:hover>.w{visibility:hidden}
+.sy{margin-left:6px;color:var(--dim);font-size:12px;font-weight:400;cursor:help}
+.syl{margin-left:3px!important;font-size:11px}
+.row.back{display:flex;justify-content:space-between;align-items:center}
+.row.back [data-v]{cursor:pointer}
+.ttl{margin-left:6px;font-style:normal;color:var(--dim)}
+.sub3>span:first-child,.oi .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oi{margin:0 0 2px 10px}
+.oi .nm small.sb{display:block;margin:1px 0 0;font-size:11px;color:var(--sub)}
+.orow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 8px;margin:2px 0 4px;border-radius:9px;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-size:13px}
+.orow .key{padding:4px 10px;font-size:11.5px;visibility:hidden}
+.orow:hover .key{visibility:visible}
+.more2,.back{padding:8px;font-size:12px;color:var(--sub);cursor:pointer;border-radius:9px}
+.back{color:var(--ink)}
+.more2:hover,.back:hover{background:var(--hov)}
+.hl{animation:hl 1.4s}
+@keyframes hl{0%,60%{background:color-mix(in srgb,var(--acc) 18%,transparent)}}
+.kids{margin:2px 0 6px}
+.crow{border-radius:10px;margin:3px 0;background:var(--off)}
+.crow .cln{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:7px 9px;cursor:pointer;font-size:12.5px}
+.crow .cln .v{font-size:12px}
+.crow .cmore{display:none;padding:0 9px 9px}
+.crow.open .cmore{display:block}
+.crow .cd{margin:0 0 6px;font-size:11.5px;color:var(--sub)}
+.crow .acts .key{padding:5px 10px;font-size:11.5px}
+.sub2{font-size:11.5px;color:var(--sub);padding:8px 2px 2px}
+.it.fold{cursor:pointer;color:var(--sub);border-left-style:dashed}
+.it.fold .ar{color:var(--dim);transition:transform .2s}
+.it.fold.on .ar{transform:rotate(90deg)}
+.sec{display:flex;align-items:center;gap:6px;padding:10px 8px 6px;font-size:11.5px;color:var(--sub);cursor:pointer;user-select:none}
+.sec:hover{color:var(--ink)}
+.sec .ar{width:12px;font-size:13px;color:var(--sub)}
+.sec .st{margin-left:auto;color:var(--dim)}
+.its{margin:-2px 0 10px}
+.it{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:5px 0 5px 10px;border-left:2px solid var(--off);font-size:12.5px;color:var(--ink)}
+.it small{display:block;color:var(--sub);font-size:11px}
+.it.own{color:var(--sub)}
+.it .key{padding:4px 9px;font-size:11px}
+.it .w{color:var(--sub);font-size:11.5px}
+/* 桌面版：窗口透明，只剩机器本身；影子收小，免得被窗口边切掉 */
+body.app{background:transparent}
+/* 收着的时候面板里的动画全停（省电脑）；滚动字幕只在面板打开时滚 */
+#dev:not(.open) #panel *{animation-play-state:paused!important}
+body.app #dev{top:10px;box-shadow:inset 0 1px 0 var(--khi),inset 0 -1px 0 rgba(0,0,0,.4),0 10px 22px rgba(0,0,0,.22),0 2px 6px rgba(0,0,0,.12)}
+</style>
+</head>
+<body data-m="w">
+
+<div id="dev">
+  <div id="mini">
+    <div class="scr"><i class="led"></i><b class="w" id="mPct">95%</b><span id="mInfo"></span></div>
+  </div>
+  <div id="panel">
+    <div class="hd" id="hd"><span class="t"><i class="led"></i><b id="tTitle">Memory</b><span class="tag">RAM MONITOR</span></span>
+      <span class="hb"><button class="key x" id="gear" aria-label="settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="8" cy="8" r="5.6" stroke-width="2.4" stroke-dasharray="2.2 2.2"/><circle cx="8" cy="8" r="4.1" stroke-width="2"/></svg></button><button class="key x" id="xBtn" aria-label="collapse"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l4-4 4 4"/></svg></button></span></div>
+    <div id="set"><div class="setIn">
+      <div class="sr"><span class="tag" id="sLook">Look</span><div class="seg" id="segM"><button class="key" data-v="w" id="bW">White</button><button class="key" data-v="g" id="bG">Graphite</button></div></div>
+      <div class="sr"><span class="tag" id="sLang">Language</span><div class="seg" id="segL"><button class="key" data-v="en">EN</button><button class="key" data-v="zh">中文</button></div></div>
+      <div class="sr"><span class="tag"><span id="sGuard">Watchdog</span><button class="key q">?<span class="pop" id="gPop"></span></button></span><div class="seg" id="segG"><button class="key" data-v="auto" id="bGa">Auto-stop</button><button class="key" data-v="warn" id="bGw">Warn only</button></div></div>
+      <div class="sr"><span class="tag" id="sSize">Resting size</span><div class="seg" id="segS"><button class="key" data-v="s" id="bS">Short</button><button class="key" data-v="l" id="bL">Long</button></div></div>
+      <div class="sr" id="aiRow"><span class="tag">AI<button class="key q">?<span class="pop" id="aiPop"></span></button></span><div class="seg sm" id="segA"><button class="key" data-v="off" id="bOff">Rules</button><button class="key" data-v="claude">Claude</button><button class="key" data-v="codex">Codex</button><button class="key" data-v="api">API</button></div></div>
+      <p class="aist" id="aiSt"><i></i><span id="aiTxt"></span></p>
+      <div id="apiF"><div>
+        <div class="fr"><span id="lType">Type</span><div class="seg sm" id="segT"><button class="key" data-v="claude">Claude</button><button class="key" data-v="openai" id="bOai">OpenAI-compatible</button></div></div>
+        <div class="fr"><span id="lUrl">Address</span><input class="fld" id="fUrl" spellcheck="false"></div>
+        <div class="fr"><span>Key</span><input class="fld" id="fKey" type="password" autocomplete="off" spellcheck="false"></div>
+        <div class="fr"><span id="lModel">Model</span><select class="fld" id="fModel"></select><button class="key sm" id="fFetch">Fetch</button></div>
+      </div></div>
+      <div class="fr" id="tRow"><span id="fMsg"></span><button class="key sm" id="fTest">Test</button></div>
+    </div></div>
+    <div class="scr main" id="main">
+      <div class="big"><b class="w" id="bigN">14.9</b><span id="bigU">/ 15.7 GB in use</span></div>
+      <div id="bar"><div id="tipBox"></div></div>
+      <div class="scale tag"><span>0</span><span>4</span><span>8</span><span>12</span><span>15.7 GB</span></div>
+      <div class="info"><span id="iFree"></span><span><span id="iVm"></span><button class="key q">?<span class="pop" id="qPop"></span></button></span></div>
+    </div>
+    <div class="scr tip" id="tip"><span class="ai"><span id="tipTag">AI TIP</span><button class="key q" id="tipQ">?<span class="pop up" id="tipPop"></span></button></span><span class="tk" id="tk"><span id="tipTxt"></span></span><span class="ta"><button class="key" id="tipGo">Go</button><button class="key" id="askB" hidden>✦ Ask AI</button></span><div id="plan"></div></div>
+    <div id="detail"><div id="detailIn"><div class="lh"><span id="lhT">Top users</span><span class="tag">LIVE</span></div><div id="list"></div></div></div>
+    <div class="ft"><span id="ftT"></span><button class="key" id="moreB" aria-label="more"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></button><span class="tag" id="gHint"></span></div>
+  </div>
+</div>
+
+<div id="qFloat"></div>
+<script>
+(()=>{
+if(/[?&]test=1/.test(location.search)){window.requestAnimationFrame=cb=>setTimeout(()=>cb(performance.now()),16);document.startViewTransition=null} // 测试用：后台窗格不出帧
+const T={
+ en:{graphite:'Graphite',white:'White',title:'Memory',inUse:'in use',free:'free',vm:'Virtual',tight:'Tight',ok:'OK',plenty:'Plenty',
+  peek:(f,n)=>`<b>${f} GB</b> free · top: <b>${n}</b>`,alert:(k,g)=>`<b>${k} left running, nobody minding</b> · ${g}`,maybe:'maybe unattended',go:'Go',top:'Who uses it',open:'Open folder',hold:'Hold to end',holdAll:(n,k)=>`Hold to quit all of ${n} (${k})`,holding:'Keep holding…',
+  ended:x=>`✓ Ended · freed ${x}`,riskChat:'Interrupts what it is doing',riskApp:'Anything unsaved will be lost',riskLeft:'The chat that opened it is closed — usually safe to end',riskItem:'This window will close',maybeN:n=>`${n} more might be unused ›`,helperChat:a=>`a helper chat (${a})`,sysName:'Windows system',sysNote:'built in, can’t be ended',qt:x=>`“${x}”`,symResume:'resumable',symShared:'only what it opened',symBg:'background',goLook:'Go',legend:'<b>Symbols</b><br>↻ can continue after you end it<br>⊘ the chat itself cannot be ended here, only what it opened<br>◌ runs in the background, no window<br>● nobody minding · ○ maybe nobody minding<br>↗ go to it: open the chat / bring up the window / open the page<br><b>What ending does</b><br>A chat: the step it is on stops. Claude app: open it and send a message to continue. Terminal: run claude --resume or codex resume<br>A Codex app chat: to stop the chat itself, press ↗ and stop it inside Codex<br>A browser: the AI opens a new one next time; a step that was using it fails<br>A page preview: it will not load until the AI starts it again; no files are lost<br>Tools the chat uses: end together with the chat, come back with the next chat<br>A whole app: every chat in it stops; unsaved work is lost',leftByName:h=>`opened by ${h}, now closed`,noWin:'It runs in the background — no window to show',lookChat:'Click to open this chat',lookWin:'Click to bring its window to the front',lookPage:'Click to open it in your browser',orphRow:n=>`● ${n} left running, nobody minding`,leftBy:a=>`opened by a ${a} chat that's now closed`,leftGone:'the program that opened it is closed',lockName:'Used by Windows itself',lockNote:'can’t be ended',endAll:'Hold to end all',allN:n=>`All ${n}`,back:'← Back',chatsOf:a=>`${a} chats`,chatsN2:n=>`${n} chat${n>1?'s':''} ›`,openNow:x=>`open: ${x}`,close:'Close',holdQuit:'Hold to quit',locked:'Can’t be ended',lockedSub:'Windows itself and other small programs',leftovers:'Its chats are closed — these were left behind',appSelf:'The app itself',appSelfSub:'windows, pages, main program, helpers · view only',inside:'What’s inside',insideSub:'view only',toolsN:n=>`The chat’s tools ×${n}`,toolsSub:'they end with the chat',inTerminal:a=>`${a} (in a terminal)`,chatsN:n=>`${n} chat${n>1?'s':''}`,orphN:n=>`${n} nobody minding`,chatItselfX:x=>`the chat itself ${x}`,secOrph:'Nobody needs these — safe to end',secChats:(n,a)=>`Chats open in ${a} · ${n}`,justWatching:'just started watching',appOf:'the app’s own windows and pages (its chats are listed above)',secMine:'Programs you opened',openedN:n=>`opened ${n} thing${n>1?'s':''}`,nowUsing:'in use now',chatItself:'The chat itself',holdClose:'Hold to close',endChat:n=>n?`Hold to end this chat (and the ${n} thing${n>1?'s':''} it opened)`:'Hold to end this chat',endOpened:n=>`Hold to close what it opened (${n})`,inFolder:d=>`works in “${d}”`,role:{tool:'the chat’s tool — ends with the chat',browser:'AI opened it to browse',preview:'a preview AI opened',opened:'AI opened it'},itName:{browser:w=>`${w} browser`,preview:w=>`Web preview ${w}`,playwright:'Web automation (Playwright)',blender:'Blender tool',mcp:w=>`${w} tool`},sharedNote:a=>`The chat itself lives inside ${a}; here you can close what it opened.`,byAgent:a=>`${a} opened it; the chat that opened it is gone`,convOf:a=>`${a} chats`,spawnOf:a=>`Programs ${a} chats opened`,spawnWarn:a=>`The chats themselves live inside ${a} and can't be ended here. Ending = closing the programs that chat opened (and theirs).`,inDir:d=>`chat in “${d}”`,opened:n=>`opened ${n} program${n>1?'s':''}`,kind:{win:'Its own windows',page:'Other small pages',main:'Main program',helper:'Helpers (graphics, network…)'},hint:{win:'The longer the chats, the bigger this gets. To shrink it: compact long chats or start a new one; or quit and reopen the app (running chats stop).',page:'Pages it opened (previews etc.), a few MB each; quitting and reopening the app clears them all.',main:'Ending this closes the whole app.',helper:'If ended they just restart — leave them.'},withKids:n=>`with ${n} helpers`,otherApps:'Other small apps',sysApps:'Windows itself (can’t end)',viewOnly:'view only',convWarn:'Ending = force-closing that chat; whatever it is doing stops.',startedAt:s=>`started ${s}`,inUse:'in use',busyNow:'working in the last minute',idleFor:v=>`idle ${v}`,idleAtLeast:v=>`idle ${v}+`,mins:m=>`${m} min`,hrs:h=>`${h} h`,moreN:n=>`${n} more ›`,live:'Live · every 3 s',paused:'Paused',
+  tipOrphan:(n,w,v)=>`${n}: ${w}. End it to free ${v}.`,tipBig:(n,v)=>`Biggest is ${n} (${v}). Close what you don't need.`,
+  tipAI:(n,v)=>`${n} has had no owner for 2 days. Ending it frees ${v} — Codex helpers can go too.`,
+  q:'<b>Memory</b>: what is actually sitting in RAM right now. When it fills up, the computer slows down.<br><b>Virtual</b>: everything programs have reserved. When RAM runs short, Windows parks idle parts on the disk. Reserving a lot is fine — parking a lot is what feels slow.',
+  detailOf:(r,v)=>`RAM ${r} GB · virtual ${v} GB`,
+  look:'Look',lang:'Language',guardSet:'Watchdog',autoStop:'Auto-stop',warnOnly:'Warn only',back:'← Back',guardWarn:(a,eta,who)=>`Memory almost full: ${a} GB left${eta?` · about ${eta}s to 1 GB`:''}${who?` · ${who} is growing`:''}`,guardStop:(who,conv,x,ag)=>`Watchdog: under 1 GB — stopped ${who}${conv?` (opened by the ${ag||'AI'} chat “${conv}”)`:ag?` (opened by ${ag})`:''}, freed ${x}`,guardMine:'you opened it yourself, so it was not stopped',size:'Resting size',short:'Short',long:'Long',tipTag:'AI TIP',more:'More',less:'Less',holdHint:'Hold: close all',closing:'Closing…',
+  rules:'Rules',yourKey:'your own API key',thinking:s=>`Asking ${s}…`,ask:'✦ Ask AI',cancel:'Cancel',asking:(s,t)=>`Asking ${s}… ${t}s`,accept:x=>`Hold to accept · ${x}`,acceptNone:'Got it',notNow:'Not now',raw:'What the AI said ›',planDone:(n,x)=>`✓ Ended ${n} · freed ${x}`,planSum:(n,x)=>x?`${n} suggestions · can free ${x} — hover to read`:`${n} suggestions — hover to read`,adviceOnly:'advice only',aiNone:'Nothing worth doing right now.',worksReal:t=>`✓ Connected (${t.toFixed(1)} s). This was only a test — for real tips, open the AI TIP strip and tap ✦ Ask AI.`,claudeFound:'✓ Found Claude Code on this computer · no key needed. Tap Test to check it answers. ',claudeMissing:'Claude Code not found on this computer: install Claude Code and sign in once.',apiNo:'Paste your key and pick a model, then tap Test.',apiOk:m=>`Using your own key · ${m}. `,keyMasked:t=>`Key saved (ends in ${t}). Leave empty to keep it.`,fetchedReal:n=>`Loaded ${n} models.`,codexFound:'✓ Found Codex on this computer · no key needed. Tap Test to check it answers. ',codexMissing:'Codex not found on this computer: install Codex and sign in once.',aiErr:{h401:'The key is wrong or expired: paste it again.',h402:'This key has no balance left: top up with your provider.',h403:'This model is not available to you: pick another one.',h404:'Model or address not found: fetch the list again and pick one.',h429:'Too many requests: wait a minute and try again.',h5xx:'The provider is having trouble: try again in a bit.',cors:'This address does not allow direct access from the app: try another address.',refusal:'The AI declined this time: try again.',claudeNotfound:'Claude Code not found on this computer: install it and sign in once.',claudeNoanswer:'Claude Code gave no answer (maybe not signed in): open it, sign in, try again.',notfound:'Codex not found on this computer: install it and sign in once.',timeout:'No answer after 3 minutes — try again.',noanswer:'Codex gave no answer (maybe not signed in): open Codex, sign in, try again.',format:'The AI answer came back in the wrong shape — try again.',cancelled:'Cancelled.'},
+  guardQ:'<b>Watchdog</b> keeps an eye on how much memory is left.<br>Nearly full (under 1.5 GB for a few seconds): the box turns red and stretches to tell you what is growing.<br>Really under 1 GB: <b>Auto-stop</b> stops the fastest-growing thing an AI opened, so the computer does not freeze. Programs you opened yourself are never stopped. <b>Warn only</b> just warns.',
+  aiQ:'<b>Rules</b>: the box works out tips by itself with fixed rules. No AI is asked and nothing leaves your computer.<br><b>Claude / Codex</b>: borrow the Claude Code or Codex already signed in on this computer. Only program names and sizes are sent.<br><b>API</b>: use your own key.',
+  st:{off:'',
+   claude:'Borrows Claude Code already signed in on this computer. A tip takes a few seconds.',
+   codex:'Borrows Codex already signed in on this computer. A tip takes a few seconds.',
+   api:'Your own key, kept only on this computer.'},
+  sends:' Only program names and sizes are sent, and only when you tap Ask AI.',
+  tipQ:(src)=>src?`<b>AI tip</b> from ${src}. Only program names and numbers are sent. Click ? to change it in Settings.`:'<b>AI tip</b>: right now the box works it out by itself with fixed rules. No AI is asked, nothing is sent. To let an AI help, connect one in Settings.',
+  type:'Type',url:'Address',model:'Model',fetch:'Fetch',test:'Test',keyPh:'Paste your key',
+  fetched:'Demo list — the real one loads from your provider.',noKey:'Paste a key first.',testing:'Testing…',works:t=>`✓ Works · ${t} s (demo)`,oaiList:'(models from your provider)'},
+ zh:{graphite:'石墨',white:'白',title:'内存',inUse:'在用',free:'空着',vm:'虚拟内存',tight:'有点挤',ok:'还行',plenty:'宽松',
+  peek:(f,n)=>`空 <b>${f} GB</b> · 最占的是 <b>${n}</b>`,alert:(k,g)=>`<b>${k} 个没人管</b> · 占 ${g}`,maybe:'可能没人管',go:'去看',top:'谁在占',open:'打开文件夹',hold:'按住结束',holdAll:(n,k)=>`按住退出整个 ${n}（${k} 个）`,holding:'继续按住…',
+  ended:x=>`✓ 已结束 · 空出 ${x}`,riskChat:'会打断它正在做的事',riskApp:'没保存的东西会丢',riskLeft:'开它的对话已经停了，关掉一般没事',riskItem:'这个窗口会被关掉',maybeN:n=>`还有 ${n} 样可能没人管 ›`,helperChat:a=>`一个帮手对话（${a}）`,sysName:'Windows 系统',sysNote:'系统自带，关不了',qt:x=>`「${x}」`,symResume:'能接着聊',symShared:'只能关它开的',symBg:'后台',goLook:'去看',legend:'<b>符号</b><br>↻ 结束后还能接着聊<br>⊘ 对话本身关不掉，只能关它开的东西<br>◌ 在后台跑，没有窗口<br>● 没人管 · ○ 可能没人管<br>↗ 去看：跳到对话 / 叫出窗口 / 打开网页<br><b>关了会怎样</b><br>对话：正在做的那一步会停。Claude App 里点开再发一句就接着聊；命令行里输入 claude --resume 或 codex resume<br>Codex 桌面版的对话：要停对话本身，点 ↗ 进 Codex 里点停止<br>浏览器：AI 下次要用会再开；它正在操作网页的那一步会失败<br>网页预览：暂时打不开，文件不会丢<br>对话的工具：结束对话时一起关，下次开对话会自己装回来<br>整个 App：里面所有对话一起停，没保存的会丢',leftByName:h=>`${h} 开的，对话已经停了`,noWin:'它在后台跑，没有窗口可看',lookChat:'点一下：打开这个对话',lookWin:'点一下：把它的窗口叫到前面',lookPage:'点一下：在浏览器里打开',orphRow:n=>`● ${n} 样开着没人管`,leftBy:a=>`${a} 对话开的，对话已经停了`,leftGone:'开它的程序已经关了',lockName:'Windows 自己在用的',lockNote:'关不了',endAll:'按住全部关掉',allN:n=>`全部 ${n} 个`,back:'← 返回',chatsOf:a=>`${a} 的对话`,chatsN2:n=>`${n} 个对话 ›`,openNow:x=>`开着${/^[A-Za-z]/.test(x)?" ":""}${x}`,close:'关',holdQuit:'按住退出',locked:'关不了的',lockedSub:'Windows 系统和其他小程序',leftovers:'对话已经停了，留下的',appSelf:'App 本身',appSelfSub:'窗口、页面、主程序、小帮手 · 只看',inside:'它里面有什么',insideSub:'只看',toolsN:n=>`对话的工具 ×${n}`,toolsSub:'对话结束它们一起关',inTerminal:a=>`${a}（终端里）`,chatsN:n=>`${n} 个对话`,orphN:n=>`${n} 样没人管`,chatItselfX:x=>`对话本身 ${x}`,secOrph:'没人要的 · 可以直接关',secChats:(n,a)=>`在 ${a} 里开着的对话 · ${n} 个`,justWatching:'刚开始看',appOf:'App 本身的窗口和页面（对话在上面那一段）',secMine:'你自己开的程序',openedN:n=>`开了 ${n} 样`,nowUsing:'正在用',chatItself:'对话本身',holdClose:'按住关',endChat:n=>n?`按住结束这个对话（连它开的 ${n} 样一起）`:'按住结束这个对话',endOpened:n=>`按住关掉它开的东西（${n} 样）`,inFolder:d=>`在「${d}」里干活`,role:{tool:'对话的工具：对话结束它就跟着关',browser:'AI 上网开的',preview:'AI 开的预览',opened:'AI 开的'},itName:{browser:w=>`${w} 浏览器`,preview:w=>`网页预览 ${w}`,playwright:'网页自动化（Playwright）',blender:'Blender 工具',mcp:w=>`${w} 工具`},sharedNote:a=>`对话本身在 ${a} 里，这里只能关它开的东西`,byAgent:a=>`是 ${a} 开的，开它的对话已经停了`,convOf:a=>`${a} 对话`,spawnOf:a=>`${a} 对话开的程序`,spawnWarn:a=>`对话本身在 ${a} 里，这里关不掉；结束 = 关掉这个对话开的程序（连它们开的一起）`,inDir:d=>`在「${d}」里的对话`,opened:n=>`开了 ${n} 个程序`,kind:{win:'它自己的窗口',page:'其他小页面',main:'主程序',helper:'显卡、网络等小帮手'},hint:{win:'对话越长、开得越多，这里越大。想降：长对话压缩一下或开新对话；或者退出重开（正在跑的对话会断）。',page:'它打开过的网页、预览等，每个只有几 MB；退出重开会一起清掉。',main:'关它 = 整个程序关掉。',helper:'关了会自己重启，不用管。'},withKids:n=>`带着 ${n} 个帮手`,otherApps:'其他小程序',sysApps:'Windows 系统（动不了）',viewOnly:'只看',convWarn:'结束 = 强行关掉那个对话，它正在做的事会中断',startedAt:s=>`${s} 开的`,inUse:'正在用',busyNow:'1 分钟内有在干活',idleFor:v=>`闲了 ${v}`,idleAtLeast:v=>`闲了 ${v} 以上`,mins:m=>`${m} 分钟`,hrs:h=>`${h} 小时`,moreN:n=>`还有 ${n} 个 ›`,live:'每 3 秒更新',paused:'你在看，先停住',
+  tipOrphan:(n,w,v)=>`「${n}」${w}，结束它能空出 ${v}`,tipBig:(n,v)=>`最大的是 ${n}（${v}），用不到的可以先关掉`,
+  tipAI:(n,v)=>`「${n}」已经两天没人管了，结束能空出 ${v}；Codex 操作工具也可以一起关。`,
+  q:'<b>内存</b>：现在真正放在内存条上的部分，满了电脑就会变卡。<br><b>虚拟内存</b>：所有程序一共“预订”的量。内存条不够时，Windows 会把最近没用的部分挪到硬盘上暂放。预订得多不一定卡，挤到硬盘的多了才会卡。',
+  detailOf:(r,v)=>`内存 ${r} GB · 虚拟内存 ${v} GB`,
+  look:'外观',lang:'语言',guardSet:'看门员',autoStop:'自动停',warnOnly:'只提醒',back:'← 返回',guardWarn:(a,eta,who)=>`内存快满了：只剩 ${a} GB${eta?` · 照这速度约 ${eta} 秒到 1 GB`:''}${who?` · ${who} 在涨`:''}`,guardStop:(who,conv,x,ag)=>`看门员：只剩不到 1 GB，已停掉 ${who}${conv?`（${ag||'AI'} 对话「${conv}」开的）`:ag?`（${ag} 开的）`:''}，空出 ${x}`,guardMine:'是你自己开的，没替你停',size:'平时大小',short:'短',long:'长',tipTag:'AI 建议',more:'看详细',less:'收起详细',holdHint:'长按全部收起',closing:'正在收起…',
+  rules:'规则',yourKey:'你自己的 API Key',thinking:s=>`正在问 ${s}…`,ask:'✦ 问 AI',cancel:'取消',asking:(s,t)=>`正在问 ${s}… ${t} 秒`,accept:x=>`按住接受 · ${x}`,acceptNone:'知道了',notNow:'不用了',raw:'看 AI 原话 ›',planDone:(n,x)=>`✓ 已结束 ${n} 个 · 空出 ${x}`,planSum:(n,x)=>x?`${n} 条建议 · 能空出 ${x}，鼠标放上来看`:`${n} 条建议，鼠标放上来看`,adviceOnly:'只是建议',aiNone:'现在没什么要处理的。',worksReal:t=>`✓ 连上了（${t.toFixed(1)} 秒）。这只是测试；要它给建议，去展开「AI 建议」那一行，点 ✦ 问 AI。`,claudeFound:'✓ 这台电脑上找到了 Claude Code · 不用 Key。点「试一下」确认它能回答。',claudeMissing:'这台电脑上没找到 Claude Code：先装好 Claude Code 并登录一次。',apiNo:'粘贴你的 Key、选好模型，再点「试一下」。',apiOk:m=>`用你自己的 Key · ${m}。`,keyMasked:t=>`Key 已存（尾号 ${t}），不换就空着。`,fetchedReal:n=>`拉到了 ${n} 个模型。`,codexFound:'✓ 这台电脑上找到了 Codex · 不用 Key。点「试一下」确认它能回答。',codexMissing:'这台电脑上没找到 Codex：先装好 Codex 并登录一次。',aiErr:{h401:'Key 不对，或者已经失效了：重新粘贴一次。',h402:'这个 Key 的余额用完了，去服务商那边充值后再试。',h403:'这个模型你现在用不了：换一个模型试试。',h404:'找不到这个模型或地址：重新拉一下列表再选。',h429:'说得太快了，过一分钟再试。',h5xx:'服务商那边出错了，等一下再试。',cors:'这个地址不让小方块直接访问：换一个地址试试。',refusal:'AI 这次不肯回答，再试一次。',claudeNotfound:'这台电脑上没找到 Claude Code：先装好并登录一次。',claudeNoanswer:'Claude Code 没回答（可能没登录）：打开它登录一下再试。',notfound:'这台电脑上没找到 Codex：先装好并登录一次。',timeout:'等了 3 分钟没回音，再试一次。',noanswer:'Codex 没回答（可能没登录）：打开 Codex 登录一下再试。',format:'AI 回的东西格式不对，再试一次。',cancelled:'已取消。'},
+  guardQ:'<b>看门员</b>一直盯着内存还剩多少。<br>快满了（剩不到 1.5 GB、并且持续几秒）：小方块变红、拉长，告诉你是谁在涨。<br>真的不到 1 GB：<b>自动停</b> = 替你停掉 AI 开的、涨得最快的那个，免得电脑卡死；你自己开的程序永远不替你停。<b>只提醒</b> = 只提醒，不动手。',
+  aiQ:'<b>规则</b>：小方块自己按定好的规矩算，不问 AI，你电脑上的东西一样都不发出去。<br><b>Claude / Codex</b>：借你电脑上已经登录好的 Claude Code 或 Codex 来出主意，只发程序名和占多少内存。<br><b>API</b>：用你自己的 Key。',
+  st:{off:'',
+   claude:'借这台电脑上已登录的 Claude Code，每条建议等几秒。',
+   codex:'借这台电脑上已登录的 Codex，每条建议等几秒。',
+   api:'用你自己的 Key，只存在这台电脑上。'},
+  sends:'只发程序名和占多少内存，你点「问 AI」才发。',
+  tipQ:(src)=>src?`<b>AI 建议</b>来自 ${src}，只发程序名和数字。点 ? 可以去设置里改。`:'<b>AI 建议</b>：现在是小方块自己按定好的规矩算的，没问 AI，什么都没发出去。想让 AI 来出主意：去设置里接上。',
+  type:'类型',url:'地址',model:'模型',fetch:'拉取',test:'试一下',keyPh:'粘贴你的 Key',
+  fetched:'示意列表：真的列表会从服务商那里拉。',noKey:'先粘贴 Key。',testing:'正在试…',works:t=>`✓ 能用 · ${t} 秒（示意）`,oaiList:'（服务商的模型）'}
+};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const chatP=c=>({id:'chat:'+c.id,chat:c,en:c.name?`“${esc(c.name)}”`:c.dir?`Chat in “${esc(c.dir)}”`:`${esc(c.agent)} chat`,zh:c.name?esc(c.name):c.dir?`在「${esc(c.dir)}」里的对话`:`${esc(c.agent)} 对话`,n:c.items.length,ram:c.ram,vm:0,pids:c.all,killPids:c.end,sys:false,who:{en:'',zh:''},since:{en:'',zh:''}});
+const _now=Date.now()/1000;
+let P=[
+ chatP({id:'d1',agent:'Claude Code',note:'1',link:'demo',name:'Plan the trip to Kyoto',dir:'travel-notes',shared:false,busy_seen:true,since:_now-18000,idle_min:240,watched_min:400,own:.36,ram:.6,all:[],end:[],items:[{kind:'browser',what:'Edge',role:'opened',n:6,ram:.3,pids:[]},{kind:'mcp',what:'playwright',role:'tool',n:2,ram:.17,pids:[]},{kind:'mcp',what:'blender',role:'tool',n:3,ram:.07,pids:[]}]}),
+ chatP({id:'d2',agent:'Claude Code',note:'1',link:'demo',name:'Fix the website footer',dir:'my-site',shared:false,busy_seen:true,since:_now-3600,idle_min:0,watched_min:60,own:.41,ram:.58,all:[],end:[],items:[{kind:'mcp',what:'playwright',role:'tool',n:2,ram:.17,pids:[]}]}),
+ {id:'claude',appOf:'Claude Code',en:'Claude',zh:'Claude',n:14,ram:1.9,vm:3.3,who:{en:'the Claude app you opened',zh:'你打开的 Claude App'},since:{en:'today 21:13',zh:'今天 21:13'}},
+ {id:'gpt',en:'ChatGPT / Codex',zh:'ChatGPT / Codex',n:13,ram:1.2,vm:2.6,who:{en:'the ChatGPT app you opened',zh:'你打开的 ChatGPT App'},since:{en:'today 16:46',zh:'今天 16:46'}},
+ {id:'edge',en:'Edge',zh:'Edge',n:21,ram:0.9,vm:1.6,who:{en:'your browser',zh:'你打开的浏览器'},since:{en:'today 17:34',zh:'今天 17:34'}},
+ {id:'def',en:'Defender',zh:'Defender 杀毒',n:1,ram:0.47,vm:0.6,who:{en:'built into Windows',zh:'Windows 自带'},since:{en:'since boot',zh:'开机时'},sys:true},
+ {id:'cx',en:'Codex helpers',zh:'Codex 操作电脑工具',n:12,ram:0.45,vm:0.65,who:{en:'Codex left them running',zh:'Codex 用完没收'},since:{en:'since 16:48',zh:'今天 16:48 起'},flag:{en:'left running',zh:'用完没收'}},
+ {id:'l91',en:'Page preview :5173',zh:'网页预览 :5173',n:1,ram:0.5,vm:2.1,who:{en:'the chat that opened it is gone',zh:'开它的对话已经没了'},since:{en:'2 days ago',zh:'前天 10:06'},flag:{en:'orphaned',zh:'没人管'}}
+];
+let RAM=15.7,LIMIT=53.7,OTHER=6.2,SYS=3.3,USED=null,COMMIT=null;const CELLS=32,MINI={w:100,h:44},LONGW=290,OPENW=360;
+const PAL=['--c1','--c2','--c3','--c4','--c5'];
+const API={claude:{url:'https://api.anthropic.com',models:['claude-opus-5-5','claude-sonnet-5-5','claude-haiku-5-5']},openai:{url:'https://api.openai.com/v1',models:null}};
+/* level：0 小方盒 / 1 简单 / 2 详细 */
+let lang='en',level=0,state='mini',hovering=false,paused=false,openId=null,ai='off',apiType='claude';const dead=new Set();
+const $=s=>document.querySelector(s),dev=$('#dev'),panel=$('#panel'),mini=$('#mini'),bar=$('#bar'),list=$('#list'),detail=$('#detail'),detailIn=$('#detailIn'),set=$('#set'),gear=$('#gear'),moreB=$('#moreB');
+const L=k=>T[lang][k];const nm=p=>p[lang];
+const f=v=>v<1?v.toFixed(2):v.toFixed(1);
+let blinkMs=2800;(function bl(){const on=document.body.classList.toggle('blink');setTimeout(bl,on?blinkMs*.35:blinkMs*.65)})();
+const sz=v=>v<.1?`${Math.max(1,Math.round(v*1024))} MB`:`${f(v)} GB`,vu=v=>v<.1?`${Math.max(1,Math.round(v*1024))}<small>MB</small>`:`${f(v)}<small>GB</small>`;
+const live=()=>P.filter(p=>!dead.has(p.id));
+const kidsOf=p=>(p.kids||[]).filter(k=>!dead.has(k.id));
+const flat=()=>live().flatMap(p=>[p,...kidsOf(p)]);
+const find=id=>flat().find(x=>x.id===id);
+// 大框架：对话放进它所在的 App；对话关了留下的放回它那个 App；系统程序和合计收进最底下「关不了的」
+function nest(arr){const tops=[],home={},lock={id:'_lock',lock:true,en:'Can’t be ended',zh:'关不了的',n:0,ram:0,vm:0,pids:[],kids:[],who:{en:'',zh:''},since:{en:'',zh:''}};
+ arr.forEach(p=>{if(p.chat||(p.byAgent&&!p.appOf))return;if(p.sys){lock.kids.push(p);return}if(p.appOf)home[p.appOf]=p;tops.push(p)});
+ const at=a=>home[a]||(home[a]=(t=>{tops.push(t);return t})({id:'agent:'+a,virtual:true,appOf:a,en:a,zh:a,n:0,ram:0,vm:0,pids:[],who:{en:'',zh:''},since:{en:'',zh:''}}));
+ arr.forEach(p=>{if(!(p.chat||(p.byAgent&&!p.appOf)))return;const h=at(p.chat?p.chat.agent:p.byAgent);h.kids=h.kids||[];h.kids.push(p)});
+ tops.forEach(t=>{if(!t.kids)return;t.own=t.ram;t.ram+=t.kids.reduce((a,k)=>a+k.ram,0);t.orph=t.kids.filter(k=>k.flag).length});
+ lock.ram=lock.kids.reduce((a,k)=>a+k.ram,0)+OTHER+SYS;tops.push(lock);return tops}
+P=nest(P);
+const used=()=>USED??11.6;
+const srcName=()=>({claude:'Claude Code',codex:'Codex',api:L('yourKey')})[ai];
+const hist=[];for(let i=0;i<39;i++)hist.push(14.6+Math.sin(i/3.4)*.35+Math.random()*.2);
+
+/* 32 格 LED */
+for(let i=0;i<CELLS;i++){const c=document.createElement('div');c.className='c';c.dataset.i=i;bar.appendChild(c)}
+const cells=[...bar.querySelectorAll('.c')];
+let owner=[];
+function assign(){const rows=live().sort((a,b)=>(!!a.lock-!!b.lock)||b.ram-a.ram);const segs=rows.flatMap((p,i)=>{const bad=p.flag?p.ram:kidsOf(p).filter(k=>k.flag).reduce((x,k)=>x+k.ram,0),c=p.lock?'--sys':PAL[Math.min(i,4)];return bad>=p.ram?[{id:p.id,gb:p.ram,c:'--acc'}]:[{id:p.id,gb:p.ram-bad,c},...(bad>0?[{id:p.id,gb:bad,c:'--acc'}]:[])]}); // 只把没人管的那一段涂橙，不把整个 App 涂橙
+ const sum=segs.reduce((a,x)=>a+x.gb,0),k=sum>RAM?RAM/sum:1;segs.forEach(x=>x.gb*=k); // 各程序加起来会重复算共用的部分，按比例缩回整条
+ const per=RAM/CELLS;owner=[];let cum=0,pos=0;segs.forEach(s=>{const end=Math.max(Math.round((cum+s.gb)/per),pos+(s.gb>0?1:0));for(let i=pos;i<end&&i<CELLS;i++)owner[i]=s;pos=Math.max(pos,end);cum+=s.gb})} // 很小的也至少占一格，下一段接在它后面，不盖掉它
+function paintCells(lit=CELLS,stagger=false){cells.forEach((c,i)=>{const s=owner[i];const on=s&&i<lit;const apply=()=>{c.style.background=on?`var(${s.c})`:'';c.classList.toggle('lit',!!on);c.dataset.id=s?s.id:''};if(stagger)setTimeout(apply,i*14);else apply()})}
+function cellsOff(){cells.slice().reverse().forEach((c,k)=>setTimeout(()=>{c.style.background='';c.classList.remove('lit')},k*8))}
+
+/* 文字 */
+function stateWord(p){return p>90?L('tight'):p>75?L('ok'):L('plenty')}
+function stColor(p){return p>90?'var(--acc)':p>75?'#F2B53C':'var(--ok)'}
+function roll(el,to,dec,suf=''){const from=parseFloat(el.dataset.v??to);el.dataset.v=to;if(from.toFixed(dec)===(+to).toFixed(dec)){el.textContent=(+to).toFixed(dec)+suf;return}const id=(el._rid=(el._rid||0)+1);const t0=performance.now();(function s(){if(el._rid!==id)return;const k=Math.max(0,Math.min(1,(performance.now()-t0)/600)),e=1-Math.pow(1-k,3);el.textContent=(from+(to-from)*e).toFixed(dec)+suf;if(k<1)requestAnimationFrame(s)})()}
+function hint(){$('#gHint').textContent=level===2?L('less'):L('more');moreB.classList.toggle('up',level===2)}
+const tipEl=$('#tip'),tk=$('#tk');
+function fitTick(){const tt=$('#tipTxt'),a=tt.firstChild;const over=!!a&&a.offsetWidth-40>tk.clientWidth+2;tipEl.classList.toggle('scroll',over);if(over)tt.style.setProperty('--dur',(a.offsetWidth/26).toFixed(1)+'s')}
+function setTip(x){const tt=$('#tipTxt');tt.innerHTML=`<span>${x}</span><span class="dup" aria-hidden="true">${x}</span>`;fitTick()}
+function swapTip(tt,t,think){const show=x=>{setTip(x);tt.style.transform='translateY(6px)';requestAnimationFrame(()=>{tt.style.opacity=1;tt.style.transform='none'})};
+ tt.style.opacity=0;tt.style.transform='translateY(-6px)';
+ setTimeout(()=>{if(!think)return show(t);tt.classList.add('think');show(L('thinking')(srcName()));setTimeout(()=>{tt.classList.remove('think');tt.style.opacity=0;setTimeout(()=>show(t),200)},think)},200)}
+function texts(){const u=used(),p=u/RAM*100,top=live().filter(x=>!x.lock).sort((a,b)=>b.ram-a.ram)[0];
+ const orph=flat().filter(x=>x.flag);document.body.style.setProperty('--st',orph.length?'var(--acc)':stColor(p));blinkMs=alarm?280:orph.length?800:p>90?1100:p>75?1800:2800;
+ roll($('#mPct'),p,0,'%');roll($('#bigN'),u,1);
+ $('#mInfo').innerHTML=guardMsg?`<b class="gw">${guardMsg}</b>`:orph.length?L('alert')(orph.length,sz(orph.reduce((a,x)=>a+x.ram,0))):L('peek')((RAM-u).toFixed(1),nm(top));
+ $('#bigU').textContent=`/ ${(+RAM).toFixed(1)} GB ${L('inUse')}`;$('#tTitle').textContent=`${L('title')} · ${stateWord(p)}`;
+ $('#iFree').innerHTML=`${L('free')} <b class="w">${(RAM-u).toFixed(1)}</b> GB`;
+ const vm=COMMIT??(live().reduce((a,x)=>a+x.vm,0)+16+5.2);$('#iVm').innerHTML=`${L('vm')} <b class="w">${vm.toFixed(1)}</b> / ${(+LIMIT).toFixed(1)} GB`;
+ $('#qPop').innerHTML=L('q');$('#tipGo').textContent=L('go');$('#lhT').textContent=L('top');$('#tipTag').textContent=L('tipTag');$('#tipPop').innerHTML=L('tipQ')(ai==='off'?null:srcName());
+ $('#sLook').textContent=L('look');$('#sGuard').textContent=L('guardSet');$('#gPop').innerHTML=L('guardQ');$('#aiPop').innerHTML=L('aiQ');$('#bGa').textContent=L('autoStop');$('#bGw').textContent=L('warnOnly');$('#sSize').textContent=L('size');$('#bS').textContent=L('short');$('#bL').textContent=L('long');$('#sLang').textContent=L('lang');$('#bW').textContent=L('white');$('#bG').textContent=L('graphite');$('#bOff').textContent=L('rules');
+ $('#aiTxt').textContent=LIVE&&ai==='codex'?(codexPath?L('codexFound')+L('sends'):codexPath===null?L('codexMissing'):''):LIVE&&ai==='claude'?(claudePath?L('claudeFound')+L('sends'):claudePath===null?L('claudeMissing'):''):LIVE&&ai==='api'?(apiKey()?L('apiOk')($('#fModel').value)+L('sends'):L('apiNo')):L('st')[ai]+(ai==='off'?'':L('sends'));updAsk();$('#aiSt').classList.toggle('on',ai!=='off');
+ $('#lType').textContent=L('type');$('#lUrl').textContent=L('url');$('#lModel').textContent=L('model');$('#fFetch').textContent=L('fetch');$('#fTest').textContent=L('test');$('#fKey').placeholder=L('keyPh');
+ $('#ftT').textContent=paused?L('paused'):L('live');hint();
+ const fl=flat().filter(x=>x.flag).sort((a,b)=>b.ram-a.ram)[0];
+ const tip=guardMsg?{id:'g'+guardMsg,t:guardMsg}:fl?{id:fl.id,t:ai!=='off'&&!LIVE?L('tipAI')(nm(fl),sz(fl.ram)):L('tipOrphan')(nm(fl),fl.who[lang],sz(fl.ram))}:{id:top.id,t:L('tipBig')(nm(top),sz(top.ram))};
+ const tt=$('#tipTxt'),k=tip.id+'|'+lang+'|'+ai;if(asking||plan){$('#tipGo').dataset.id=tip.id;drawWave();return}
+ if(tt.dataset.k!==k){const quiet=!tt.dataset.k||tt.dataset.lang!==lang;const think=tt.dataset.ai!==ai&&ai!=='off'&&!LIVE;tt.dataset.k=k;tt.dataset.lang=lang;tt.dataset.ai=ai;if(quiet)setTip(tip.t);else swapTip(tt,tip.t,think?1100:0)}
+ $('#tipGo').dataset.id=tip.id;
+ drawWave()}
+function drawWave(){if(!$('#wp'))return;const lo=Math.min(...hist)-.2,hi=Math.max(...hist)+.2;$('#wp').setAttribute('d','M'+hist.map((v,i)=>(i/(hist.length-1)*100).toFixed(1)+' '+(21-(v-lo)/(hi-lo)*19).toFixed(1)).join(' L'))}
+
+/* 列表 */
+function tkOf(p){return cells.map((c,i)=>`<i class="${owner[i]&&owner[i].id===p.id?'on':''}" style="${owner[i]&&owner[i].id===p.id?`background:var(${owner[i].c})`:''}"></i>`).join('')}
+const itemName=x=>{const n=L('itName');return x.kind==='browser'?n.browser(x.what):x.kind==='preview'?n.preview(x.what):x.kind==='mcp'?(n[x.what]||n.mcp(x.what)):x.kind==='agent'?L('helperChat')(agentShort(x.what)):x.what};
+const roleText=x=>{const r=L('role');return x.role==='tool'?r.tool:r[x.kind]||r.opened};
+const chatLive=c=>!c.shared&&c.busy_seen&&c.idle_min<1;
+const chatIdle=c=>c.busy_seen?idleText(c).t:c.watched_min<2?L('justWatching'):L('idleAtLeast')(c.watched_min>=60?L('hrs')(Math.floor(c.watched_min/60)):L('mins')(c.watched_min));
+function chatSub(c){const a=[];if(!c.shared)a.push(chatLive(c)?L('nowUsing'):chatIdle(c));if(c.items.length)a.push(L('openedN')(c.items.length));return a.join(' · ')}
+const fold=(act,t,sub,x)=>`<div class="it fold" data-a="${act}"><span>${t}<small>${sub}</small></span><span class="w">${sz(x)}</span><span class="ar">›</span></div>`;
+// 清单（方案 A，照 CleanMyMac / MenuBar Stats）：只列最占的 5 个，每行只有名字和大小，按钮等鼠标放上去才出现
+let view='top';
+const seen=x=>['browser','preview','app','agent'].includes(x.kind); // 对话里只露看得见的东西（浏览器、预览、Blender、叫来的另一个 AI）
+const risk=t=>`<div class="risk">⚠ ${t}</div>`;
+function simpleRow(p){const go=!!(p.kids&&kidsOf(p).some(k=>k.chat)),btn=p.lock||p.sys||p.virtual||go?'':`<button class="key hold" data-a="kill"><span>${p.n>1&&!p.flag?L('holdQuit'):L('hold')}</span><i></i></button>`,can=!p.lock&&!p.sys&&!p.virtual&&(p.pids||[]).length,acts=can||btn?`<span class="hvs">${can?lookB():''}${btn}</span>`:'';
+ return `<div class="row sr${go?' go':''}${can?' lkh':''}" data-id="${p.id}"${can?lkA({pids:p.pids,port:p.port}):''}><span class="nm">${p.lock?`${L('sysName')}<small>${L('sysNote')}</small>`:p.virtual?L('inTerminal')(p[lang]):p[lang]}${go?`<small>${L('chatsN2')(kidsOf(p).filter(k=>k.chat).length)}</small>`:''}${p.flag?'<em>●</em>':p.orph?`<em>● ${L('orphN')(p.orph)}</em>`:''}</span><span class="v w">${vu(p.ram)}</span>${acts}</div>${btn?risk(L('riskApp')):''}`}
+const lkA=(o,tip)=>` data-pids="${(o.pids||[]).join(',')}"${o.link?` data-link="${esc(o.link)}"`:''}${o.port?` data-port="${o.port}"`:''} title="${L(tip||(o.port?'lookPage':'lookWin'))}"`;
+const sym=(c,k)=>`<span class="sy" title="${L(k)}">${c}${+(load('opens')||0)<=5?`<small class="syl">${L(k)}</small>`:''}</span>`;
+const lookB=()=>`<button class="key gk" data-a="look">↗ ${L('goLook')}</button>`;
+const ttl=x=>x.title?`<i class="ttl">${esc(x.title)}</i>`:'';
+const agentShort=a=>({'Claude Code':'Claude'})[a]||a;
+function orphItem(x){const q=x.conv&&esc(L('qt')(x.conv)),cn=q,by=cn?L('leftByName')(cn):esc(x.byAgent?L('leftBy')(agentShort(x.byAgent)):L('leftGone'));return `<div class="row sr oi lkh" data-id="${x.id}"${lkA({pids:x.pids,port:x.port})}><span class="nm">${x[lang]}${ttl(x)}<small class="sb">${by}</small></span><span class="v w">${vu(x.ram)}</span><span class="hvs">${lookB()}<button class="key hold" data-a="kill"><span>${L('hold')}</span><i></i></button></span></div>`}
+function convRow(p){const c=p.chat,vis=c.items.filter(seen);
+ return `<div class="row cv" data-id="${p.id}"><div class="sr lkh" data-up="1"${lkA({pids:c.end,link:c.link},'lookChat')}><span class="nm">${p[lang]}${c.shared?sym('⊘','symShared'):c.note?sym('↻','symResume'):''}</span><span class="v w">${vu(p.ram)}</span><span class="hvs">${lookB()}<button class="key hold" data-a="kill"><span>${L('hold')}</span><i></i></button></span></div>${risk(L('riskChat'))}${vis.map(x=>`<div class="sub3 lkh" data-i="${c.items.indexOf(x)}"${lkA(x)}><span>└ ${esc(L('openNow')(itemName(x)))}${['browser','app'].includes(x.kind)&&!x.win?sym('◌','symBg'):''}${ttl(x)}</span><span class="w">${sz(x.ram)}</span><span class="hvs">${lookB()}<button class="key hold" data-a="killi"><span>${L('hold')}</span><i></i></button></span></div>${x.kind==='app'?risk(L('riskApp')):''}`).join('')}</div>`}
+function buildList(){list.innerHTML='';const tops=live().filter(p=>!p.lock).sort((a,b)=>b.ram-a.ram),lock=live().find(p=>p.lock),orph=flat().filter(x=>x.flag);
+ const add=h=>list.insertAdjacentHTML('beforeend',h);
+ if(view!=='top'&&view!=='all'&&!find(view.app))view='top';
+ const orphTop=orph.filter(x=>live().includes(x));
+ if(view==='top'){if(orphTop.length){add(`<div class="row orow" data-id="_orph"><span>${L('orphRow')(orphTop.length)}</span><button class="key hold" data-a="kill"><span>${L('endAll')}</span><i></i></button></div>`);orphTop.slice(0,4).forEach(x=>add(orphItem(x)))}
+  tops.filter(p=>!orphTop.includes(p)).slice(0,5).forEach(p=>add(simpleRow(p)));if(tops.length>5)add(`<div class="row more2" data-v="all">${L('allN')(tops.length)} ›</div>`)}
+ else if(view==='all'){add(`<div class="row back" data-v="top">${L('back')}</div>`);[...tops,...(lock?[lock]:[])].forEach(p=>add(simpleRow(p)))}
+ else{const app=find(view.app);add(`<div class="row back"><span data-v="top">${L('back')} · ${esc(L('chatsOf')(app[lang]))}</span><button class="key q">?<span class="pop">${L('legend')}</span></button></div>`);kidsOf(app).filter(k=>k.chat).sort((a,b)=>b.ram-a.ram).forEach(k=>add(convRow(k)));const lf=kidsOf(app).filter(k=>!k.chat&&k.flag),mb=kidsOf(app).filter(k=>!k.chat&&!k.flag);if(lf.length){add(`<div class="sub2">${L('leftovers')}</div>`);lf.forEach(x=>add(orphItem(x)))}if(mb.length){add(`<div class="row more2" data-a="maybe">${L('maybeN')(mb.length)}</div><div class="mbl" hidden>${mb.map(orphItem).join('')}</div>`)}}
+ list.querySelectorAll('.row').forEach(r=>r.classList.toggle('in',level===2));if(window.bindQ)list.querySelectorAll('.q').forEach(window.bindQ);kick()}
+list.addEventListener('click',e=>{const v=e.target.closest('[data-v]');if(v){view=v.dataset.v;buildList();return}const m=e.target.closest('[data-a="maybe"]');if(m){const box=m.nextElementSibling;box.hidden=!box.hidden;kick();return}const g=e.target.closest('[data-a="look"]');if(g){lookAt(g.closest('.lkh'));return}if(e.target.closest('[data-a]'))return;const r=e.target.closest('.sr.go');if(r){view={app:r.dataset.id};buildList()}});
+async function lookAt(el){const d=el.dataset;const ok=LIVE?await TAURI.core.invoke('look',{pids:d.pids?d.pids.split(',').filter(Boolean).map(Number):[],link:d.link||null,port:d.port?+d.port:null,up:d.up==='1'}).catch(()=>false):true;if(!ok){setTip(L('noWin'));setTimeout(()=>{if(!asking&&!plan)resetTip()},2200)}}
+
+/* 高度弹簧：小方盒 → 简单 → 详细，都是同一个高度；点一下它自己弹过去 */
+let H=MINI.h,V=0,raf=0,lastLit=-1,MW=MINI.w,pinLong=false,alarm=false,guardMsg='',guardMode='auto';
+const mwT=()=>level===0&&state!=='opening'?(pinLong?LONGW:MINI.w):MW; // 收着时：只看设置里的“平时大小”，报警也不拉长
+const hS=()=>Math.round(panel.getBoundingClientRect().height-detail.getBoundingClientRect().height); // 用小数高度相减，避免取整来回跳、弹簧停不下
+const dH=()=>detailIn.offsetHeight;
+function restH(){return MINI.h}
+const capD=s=>Math.max(160,innerHeight-10-s-18); // 详细列表最多长到窗口底，再多就在里面滚
+function tH(){if(level===0)return restH();const s=hS();return level===2?s+Math.min(dH(),capD(s)):s}
+function apply(){const s=Math.max(hS(),MINI.h+1);
+ const prog=state==='open'?1:Math.max(0,Math.min(1,(H-MINI.h)/(s-MINI.h)));const ease=1-Math.pow(1-prog,3);
+ const det=Math.max(0,H-s);detail.style.height=det+'px';
+ dev.style.height=H+'px';dev.style.width=(MW+(OPENW-MW)*ease)+'px';dev.classList.toggle('long',state==='mini'&&MW>MINI.w+(LONGW-MINI.w)*.6);dev.style.borderRadius=(18+4*ease)+'px';
+ const mf=Math.max(0,prog-.12);mini.style.opacity=Math.max(0,1-mf*4);mini.style.transform=`translateY(${-mf*14}px)`;
+ panel.style.opacity=Math.max(0,Math.min(1,(prog-.18)/.45));HOST.hit();panel.style.transform=`translateY(${(1-ease)*-10}px)`;
+ const cap=capD(s),over=level===2&&dH()>cap+1;detail.classList.toggle('scroll',over&&state==='open'&&det>=cap-1);list.querySelectorAll('.row').forEach(r=>r.classList.toggle('in',r.offsetTop+18<det||(over&&det>=cap-1)));
+ if(state==='opening'){const n=H>=s-1?CELLS:prog>.05?Math.floor(prog*CELLS):0;if(n!==lastLit){lastLit=n;paintCells(n)}}}
+function loop(){const t=tH(),wt=mwT();const a=-420*(H-t)-34*V;V+=a/60;H+=V/60;MW+=(wt-MW)*.2;if(Math.abs(V)<.5&&Math.abs(H-t)<.4&&Math.abs(MW-wt)<.4){H=t;V=0;MW=wt;apply();raf=0;settled();return}apply();raf=requestAnimationFrame(loop)}
+function kick(){if(!raf)raf=requestAnimationFrame(loop)}
+function settled(){if(state==='opening'){state='open';save('opens',+(load('opens')||0)+1);dev.classList.add('open');paintCells(CELLS);lastLit=CELLS}if(state==='closing'){state='mini';dev.classList.remove('open');HOST.shrink()}}
+function setLevel(l){if(l===0){doClose();return}
+ if(state==='mini'||state==='closing'){HOST.grow();state='opening';lastLit=-1;assign();texts()}
+ if(l<2&&openId){openId=null;list.querySelectorAll('.row.open').forEach(r=>r.classList.remove('open'))}
+ level=l;hint();kick()}
+function doClose(){if(state==='mini')return;
+ openId=null;list.querySelectorAll('.row.open').forEach(r=>r.classList.remove('open'));set.classList.remove('on');gear.classList.remove('latched');tipEl.classList.remove('open');
+ cellsOff();state='closing';dev.classList.remove('open');pause(false);hovering=false;
+ setTimeout(()=>{level=0;hint();kick()},120)}
+addEventListener('resize',()=>kick());const ro=new ResizeObserver(()=>kick());[set,$('#main'),$('#tip'),detailIn].forEach(el=>ro.observe(el));
+
+/* 小方盒：靠近探出一行，点一下打开（电脑上不用拖） */
+let hT=0;dev.addEventListener('mouseenter',()=>{clearTimeout(hT);hT=setTimeout(()=>{hovering=true;if(state==='mini')kick()},300)});
+dev.addEventListener('mouseleave',()=>{clearTimeout(hT);hovering=false;if(state==='mini')kick()});
+dev.addEventListener('pointerdown',()=>{clearTimeout(hT);if(hovering){hovering=false;if(state==='mini')kick()}},true); // 按下去要拖 / 要点：不拉成长条
+dev.addEventListener('click',()=>{if(dragged){dragged=false;return}if(state==='mini')setLevel(1)});
+
+/* 底边按钮：点一下 = 看详细 / 收起详细；长按 = 全部收起（进度线走满，LED 一格格熄灭） */
+moreB.addEventListener('click',e=>{e.stopPropagation();setLevel(level===2?1:2)});
+
+/* 收起：⌃ 键、点顶行、点外面、Esc */
+$('#hd').addEventListener('click',e=>{e.stopPropagation();if(dragged){dragged=false;return}doClose()});
+document.addEventListener('pointerdown',e=>{if(!dev.contains(e.target))doClose()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')doClose()});
+
+/* 设置：齿轮按下去卡住，设置从标题下滑出；外观 / 语言 / AI 是“按下一个、另一个弹起”的键 */
+function openSet(on){set.classList.toggle('on',on);gear.classList.toggle('latched',on)}
+gear.addEventListener('click',e=>{e.stopPropagation();openSet(!set.classList.contains('on'))});
+const vt=fn=>document.startViewTransition&&!document.hidden?document.startViewTransition(fn):fn();
+function save(k,v){try{localStorage.setItem('memo.'+k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem('memo.'+k)}catch(e){return null}}
+function syncSeg(){const m=document.body.dataset.m;[['#segM',m],['#segL',lang],['#segG',guardMode],['#segS',pinLong?'l':'s'],['#segA',ai],['#segT',apiType]].forEach(([g,v])=>document.querySelectorAll(g+' .key').forEach(b=>b.classList.toggle('latched',b.dataset.v===v)))}
+function setSkin(m){if(document.body.dataset.m===m)return;save('skin',m);
+ if(state==='open'){cells.forEach(c=>{c.style.background='';c.classList.remove('lit')});setTimeout(()=>paintCells(CELLS,true),280)}
+ vt(()=>{document.body.dataset.m=m;syncSeg()})}
+function setLang(l){lang=l;document.documentElement.lang=l==='en'?'en':'zh-CN';syncSeg();texts();buildList()}
+$('#segM').addEventListener('click',e=>{const b=e.target.closest('.key');if(b)setSkin(b.dataset.v)});
+$('#segG').addEventListener('click',e=>{const b=e.target.closest('.key');if(!b)return;guardMode=b.dataset.v;save('guard',guardMode);syncSeg();if(LIVE)TAURI.core.invoke('set_guard',{auto:guardMode==='auto'}).catch(()=>{})});
+$('#segS').addEventListener('click',e=>{const b=e.target.closest('.key');if(!b)return;pinLong=b.dataset.v==='l';save('size',b.dataset.v);syncSeg();kick()});
+$('#segL').addEventListener('click',e=>{const b=e.target.closest('.key');if(b&&b.dataset.v!==lang){save('lang',b.dataset.v);vt(()=>setLang(b.dataset.v))}});
+
+/* AI：规则 / 借 Claude Code / 借 Codex / 自己的 API（一套就够）。示意页不真的连，桌面版里再接 */
+function msg(t,c){const m=$('#fMsg');m.textContent=t||'';m.className=c||''}
+function setAI(v){ai=v;save('ai',v);if(LIVE&&v==='codex')TAURI.core.invoke('codex_status').then(r=>{codexPath=r;texts()}).catch(()=>{codexPath=null;texts()});if(LIVE&&v==='claude')TAURI.core.invoke('claude_status').then(r=>{claudePath=r;texts()}).catch(()=>{claudePath=null;texts()});syncSeg();$('#apiF').classList.toggle('on',v==='api');$('#tRow').classList.toggle('on',v!=='off');msg('');texts()}
+function setType(v){apiType=v;syncSeg();$('#fUrl').value=API[v].url;fillModels(API[v].models?[API[v].models[0]]:null);saveApi();msg('')}
+function fillModels(arr){$('#fModel').innerHTML=(arr||[L('oaiList')]).map(m=>`<option>${m}</option>`).join('')}
+$('#segA').addEventListener('click',e=>{const b=e.target.closest('.key');if(b&&b.dataset.v!==ai)setAI(b.dataset.v)});
+$('#fModel').addEventListener('change',()=>{saveApi();texts()});$('#fUrl').addEventListener('change',saveApi);
+$('#segT').addEventListener('click',e=>{const b=e.target.closest('.key');if(b&&b.dataset.v!==apiType)setType(b.dataset.v)});
+$('#fFetch').addEventListener('click',async()=>{keepKey();if(!apiKey())return msg(L('noKey'),'bad');if(!LIVE){fillModels(API[apiType].models);return msg(L('fetched'))}msg(L('testing'));try{const ms=await listModels();fillModels(ms);saveApi();msg(L('fetchedReal')(ms.length),'ok')}catch(e){msg(errText(e),'bad')}});
+$('#fTest').addEventListener('click',()=>{keepKey();if(LIVE&&ai!=='off'){if(ai==='api'&&!apiKey())return msg(L('noKey'),'bad');msg(L('testing'));const t0=Date.now();askAI('Reply with exactly: {"ok":true}',true).then(()=>{msg(L('worksReal')((Date.now()-t0)/1000),'ok');texts()}).catch(e=>msg(errText(e),'bad'));return}if(ai==='api'&&!$('#fKey').value.trim())return msg(L('noKey'),'bad');msg(L('testing'));const t=ai==='api'?1.3:4.2;setTimeout(()=>msg(L('works')(t),'ok'),ai==='api'?700:1400)});
+$('#tipQ').addEventListener('click',e=>{e.stopPropagation();openSet(true);const r=$('#aiRow');r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash')});
+
+/* 问 AI：你按了才问 → AI 回最多 3 条的小单子 → 你按住「接受」→ 小程序照单子关（AI 只出主意，不动手） */
+let asking=null,plan=null,codexPath,claudePath;const planEl=$('#plan');
+/* 自己的 Key：只存在这台电脑的小方块里（单独一个键，不进任何备份、不上传）；直接从小方块发给服务商 */
+const apiKey=()=>{try{return localStorage.getItem('memo.apikey')||''}catch(e){return ''}};
+function keepKey(){const v=$('#fKey').value.trim();if(v&&!v.startsWith('••')){try{localStorage.setItem('memo.apikey',v)}catch(e){}$('#fKey').value='';showKey()}saveApi()}
+function showKey(){const k=apiKey();$('#fKey').placeholder=k?L('keyMasked')(k.slice(-4)):L('keyPh')}
+function saveApi(){save('api',JSON.stringify({type:apiType,url:$('#fUrl').value.trim(),model:$('#fModel').value}))}
+function loadApi(){try{const a=JSON.parse(load('api')||'null');if(!a)return;apiType=a.type||apiType;$('#fUrl').value=a.url||API[apiType].url;fillModels(a.model?[a.model]:API[apiType].models&&[API[apiType].models[0]]);syncSeg()}catch(e){}}
+const base=()=>($('#fUrl').value.trim()||API[apiType].url).replace(/\/+$/,'');
+function hdr(){const k=apiKey();return apiType==='claude'?{'x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'}:{'Authorization':'Bearer '+k,'content-type':'application/json'}}
+async function http(url,opt){let r;try{r=await fetch(url,{...opt,headers:hdr()})}catch(e){throw 'cors'}if(!r.ok){const c=r.status;throw c===401?'h401':c===402?'h402':c===403?'h403':c===404?'h404':c===429?'h429':c>=500?'h5xx':'noanswer'}return r.json()}
+async function listModels(){if(apiType==='claude'){const j=await http(base()+'/v1/models?limit=100',{method:'GET'});return (j.data||[]).map(m=>m.id)}const j=await http(base()+'/models',{method:'GET'});return (j.data||[]).map(m=>m.id).sort()}
+async function callApi(prompt,short){const model=$('#fModel').value;if(apiType==='claude'){const j=await http(base()+'/v1/messages',{method:'POST',body:JSON.stringify({model,max_tokens:short?200:4000,messages:[{role:'user',content:prompt}]})});if(j.stop_reason==='refusal')throw 'refusal';return (j.content||[]).filter(x=>x.type==='text').map(x=>x.text).join('')}
+ const j=await http(base()+'/chat/completions',{method:'POST',body:JSON.stringify({model,messages:[{role:'user',content:prompt}]})});return ((j.choices||[])[0]||{}).message?.content||''}
+function askAI(prompt,short){return ai==='api'?callApi(prompt,short):TAURI.core.invoke(ai==='claude'?'ask_claude':'ask_codex',{prompt}).catch(e=>{throw ai==='claude'&&(e==='notfound'||e==='noanswer')?'claude'+e[0].toUpperCase()+e.slice(1):e})}
+const errText=e=>{const t=L('aiErr')[e];return t?t+(ai==='api'?` (${$('#fModel').value})`:''):String(e)};
+
+function updAsk(){const b=$('#askB');b.hidden=!plan&&(ai==='off'||(LIVE&&ai==='api'&&!apiKey()));b.textContent=asking?L('cancel'):plan?L('back'):L('ask')}
+function resetTip(){const tt=$('#tipTxt');tt.dataset.k='';texts()}
+async function buildPrompt(){let ci=0;const rows=flat().filter(p=>!p.lock&&!p.virtual).map(p=>p.chat?{id:p.id,kind:'ai_chat',tool:p.chat.agent,name:`${p.chat.agent} chat ${++ci}`,ram_gb:+p.ram.toFixed(3),idle_min:p.chat.shared?null:p.chat.idle_min,in_use:chatLive(p.chat),started:sinceText(p.chat.since).en,opened:p.chat.items.map(x=>({what:x.kind==='mcp'?x.what+' tool':x.what,role:x.role,gb:+x.ram.toFixed(2)}))}:({id:p.id,name:p.en,count:p.n,ram_gb:+p.ram.toFixed(3),reserved_gb:+p.vm.toFixed(2),system:!!p.sys,flag:p.flag?'orphaned':p.maybe?'maybe-orphaned':'',copies_from_ai_chats:p.perConv||0,why:p.who.en,started:p.since.en}));
+ for(const r of rows){const p=find(r.id);if(p.n>5&&!p.sys&&!p.chat){const d=await getParts(p).catch(()=>null);if(d&&d.parts.length>1){r.parts=d.parts.map(x=>({kind:{conv:'ai_chats',spawn:'programs_opened_by_chats',win:'its_own_windows',page:'other_small_pages',main:'main_program',helper:'helpers'}[x.kind],tool:x.agent||undefined,count:x.n,gb:+x.ram.toFixed(2)}));}}}
+ return `You are a memory helper inside a small desktop widget. Total RAM ${(+RAM).toFixed(1)} GB, in use ${used().toFixed(1)} GB.
+Programs (JSON): ${JSON.stringify(rows)}
+Pick at most 5 things worth doing to free memory. Rules:
+- Use only ids from the list.
+- Always include items flagged "orphaned" with "end": true, even if they are small: they are leftovers nobody uses.
+- Items flagged "maybe-orphaned" may be leftovers or may be kept on purpose: give "end": false and start "why" with ${lang==='zh'?'"可能"':'"maybe"'}.
+- kind "ai_chat" = one AI chat plus everything it opened (in "opened": role "tool" = the chat's own tools, "opened" = windows/previews the AI opened). "end": true only when idle_min >= 120 and in_use is false (it looks finished) — ending closes the chat and everything it opened. Otherwise "end": false; you may say which opened things look unneeded.
+- copies_from_ai_chats > 1 means every AI chat (Claude Code, Codex, …) started its own copy: never end those directly ("end": false); advise closing finished chats instead.
+- If an app has "parts" / "chats", use them in "detail" to say exactly where its memory goes (e.g. its own windows vs chats vs small pages) and which chats look finished (long idle).
+- "end": true only for things that are safe to end right now (orphaned dev servers, helpers left running). Never for system:true, and never for apps the person is probably using (browsers, chat apps, editors) — for those give advice with "end": false.
+- "why": short, ${lang==='zh'?'in Chinese, at most 24 characters':'in English, at most 14 words'}.
+- "note": one short sentence summary ${lang==='zh'?'in Chinese':'in English'}.
+- "detail": 2 to 4 plain sentences ${lang==='zh'?'in Chinese':'in English'} for a non-technical person: what is using the memory right now and what to do first.
+Reply with ONLY valid JSON (no explanation, no Markdown code fences): {"items":[{"id":"...","why":"...","end":true}],"note":"...","detail":"..."}`}
+function parseAI(t){const s=t.trim().replace(/^```(?:json)?/i,'').replace(/```$/,'');const i=s.indexOf('{'),j=s.lastIndexOf('}');if(i<0||j<i)throw new SyntaxError('no json');const o=JSON.parse(s.slice(i,j+1));
+ const items=(o.items||[]).filter(x=>P.find(p=>p.id===x.id)).slice(0,5).map(x=>{const p=P.find(q=>q.id===x.id),end=!!x.end&&!p.sys;return {id:x.id,why:String(x.why||'').slice(0,60),end,on:end}});
+ return {items,note:String(o.note||'').slice(0,160),detail:String(o.detail||'').slice(0,600),raw:t.trim()}}
+const fakeAI=()=>new Promise(r=>setTimeout(()=>{const fl=live().filter(x=>x.flag).slice(0,2),top=live().filter(x=>!x.flag&&!x.sys)[0];
+ r(JSON.stringify({items:[...fl.map(x=>({id:x.id,why:lang==='zh'?'没人管，可以关':'nobody is using it',end:true})),...(top?[{id:top.id,why:lang==='zh'?'最占，关掉不用的窗口':'biggest; close unused windows',end:false}]:[])],note:lang==='zh'?'有 2 个没人管的可以直接关。':'Two leftovers can be ended now.',detail:lang==='zh'?'现在内存主要被 Claude 和浏览器占着。两个没人管的程序可以直接关；Claude 开着很多窗口，关掉不用的那几个会空出不少。':'Most memory is used by Claude and the browser. The two leftovers can be ended now; closing Claude windows you are not using frees much more.'}))},2500));
+function endAsk(){if(asking){clearInterval(asking.timer);asking=null}tipEl.classList.remove('asking');updAsk()}
+async function ask(){if(asking){endAsk();if(LIVE)TAURI.core.invoke('cancel_codex').catch(()=>{});setTip(L('aiErr').cancelled);setTimeout(()=>{if(!asking&&!plan)resetTip()},1500);return}
+ plan=null;renderPlan();tipEl.classList.add('open','asking');const src=srcName(),t0=Date.now(),tick=()=>setTip(L('asking')(src,Math.round((Date.now()-t0)/1000)));tick();asking={timer:setInterval(tick,1000)};updAsk();
+ let txt;try{txt=LIVE?await askAI(await buildPrompt()):await fakeAI()}catch(e){if(!asking)return;endAsk();setTip(errText(e));return}
+ if(!asking)return;endAsk();try{plan=parseAI(txt)}catch(e){setTip(L('aiErr').format);return}
+ tipEl.classList.add('open');setTip(plan.note||L('aiNone'));renderPlan();updAsk()}
+function renderPlan(){if(!plan){planEl.classList.remove('on','raw-on');planEl.innerHTML='';return}
+ const sel=plan.items.filter(x=>x.on),gb=sel.reduce((a,x)=>a+P.find(p=>p.id===x.id).ram,0);
+ planEl.innerHTML=plan.items.map((x,i)=>{const p=P.find(q=>q.id===x.id);return `<div class="pi${x.on?' on':''}${x.end?'':' nokill'}" data-i="${i}"><span class="bx">✓</span><span class="pn">${esc(nm(p))}<small>${esc(x.why)}${x.end?'':' · '+L('adviceOnly')}</small></span><span class="w">${sz(p.ram)}</span></div>`}).join('')
+  +(plan.detail?`<p class="pd">${esc(plan.detail)}</p>`:'')+`<div class="pf"><span></span><span class="ta"><button class="key" id="nopB">${sel.length?L('notNow'):L('acceptNone')}</button>${sel.length?`<button class="key hold" id="accB"><span>${L('accept')(sz(gb))}</span><i></i></button>`:''}</span></div>`;
+ planEl.classList.add('on')}
+$('#askB').addEventListener('click',e=>{e.stopPropagation();if(plan&&!asking){plan=null;renderPlan();tipEl.classList.remove('open');resetTip();updAsk();return}ask()});
+const planSum=()=>{const sel=plan.items.filter(x=>x.on),gb=sel.reduce((a,x)=>a+P.find(p=>p.id===x.id).ram,0);return L('planSum')(plan.items.length,gb?sz(gb):'')};
+planEl.addEventListener('click',e=>{e.stopPropagation();const it=e.target.closest('.pi');if(it&&!it.classList.contains('nokill')){const x=plan.items[+it.dataset.i];x.on=!x.on;renderPlan();return}
+ if(e.target.closest('.raw')){planEl.classList.toggle('raw-on');return}
+ if(e.target.closest('#nopB')){plan=null;renderPlan();resetTip()}});
+let ah=null;
+planEl.addEventListener('pointerdown',e=>{const b=e.target.closest('#accB');if(!b||!plan)return;e.stopPropagation();const sel=plan.items.filter(x=>x.on),ids=sel.map(x=>x.id),mine=cells.filter(c=>ids.includes(c.dataset.id));b.classList.add('down');const t0=performance.now();ah={b,raf:0};
+ (function step(t){if(!ah)return;const p=Math.min(1,(t-t0)/1100);b.style.setProperty('--p',p);const k=Math.ceil(mine.length*p);mine.forEach((c,i)=>c.classList.toggle('drain',i>=mine.length-k));if(p<1){ah.raf=requestAnimationFrame(step)}else{ah=null;accept(sel,mine)}})(t0)});
+const stopAh=e=>{if(!ah||(e.type==='pointerleave'&&e.target!==ah.b))return;cancelAnimationFrame(ah.raf);ah.b.classList.remove('down');ah.b.style.setProperty('--p',0);cells.forEach(c=>c.classList.remove('drain'));ah=null};
+['pointerup','pointercancel','pointerleave'].forEach(t=>planEl.addEventListener(t,stopAh,true));
+async function accept(sel,mine){const gs=sel.map(x=>find(x.id)).filter(Boolean),gb=gs.reduce((a,p)=>a+p.ram,0);
+ if(LIVE){const ch=gs.filter(p=>p.chat),pl=gs.filter(p=>!p.chat);if(ch.length)await TAURI.core.invoke('kill_tree',{pids:ch.flatMap(p=>p.killPids)}).catch(()=>{});if(pl.length)await TAURI.core.invoke('kill',{pids:pl.flatMap(p=>p.pids||[])}).catch(()=>{})}else sel.forEach(x=>dead.add(x.id));
+ mine.forEach(c=>{c.classList.remove('drain','lit');c.style.background=''});planEl.innerHTML=`<div class="done">${L('planDone')(sel.length,sz(gb))}</div>`;
+ setTimeout(()=>{plan=null;renderPlan();if(LIVE)pull();else{assign();paintCells(CELLS,true);buildList()}resetTip()},2200)}
+
+/* 格子条：滑过看是谁，点一下找到它 */
+const qf=$('#qFloat');function bindQ(q){if(q._b)return;q._b=1;q.addEventListener('mouseenter',()=>{qf.innerHTML=q.querySelector('.pop').innerHTML;const r=q.getBoundingClientRect(),W=260,h=qf.offsetHeight;qf.style.left=Math.max(8,Math.min(innerWidth-W-8,r.right-W+10))+'px';qf.style.top=(r.bottom+8+h<innerHeight-8?r.bottom+8:Math.max(8,r.top-8-h))+'px';qf.classList.add('on')});q.addEventListener('mouseleave',()=>qf.classList.remove('on'))}window.bindQ=bindQ;document.querySelectorAll('.q').forEach(bindQ);
+const tipBox=$('#tipBox');
+bar.addEventListener('pointermove',e=>{const c=e.target.closest('.c');if(!c||!c.dataset.id){tipBox.classList.remove('on');bar.classList.remove('focus');return}const id=c.dataset.id;bar.classList.add('focus');cells.forEach(x=>x.classList.toggle('hl',x.dataset.id===id));const p=P.find(x=>x.id===id);const name=p?nm(p):(id==='_o'?L('otherApps'):L('sysApps'));const gb=p?p.ram:(id==='_o'?OTHER:SYS);tipBox.textContent=`${name} · ${f(gb)} GB`;tipBox.classList.add('on');const r=bar.getBoundingClientRect(),cr=c.getBoundingClientRect();tipBox.style.left=Math.max(0,Math.min(r.width-tipBox.offsetWidth,cr.left-r.left-tipBox.offsetWidth/2))+'px';pause(true)});
+bar.addEventListener('pointerleave',()=>{tipBox.classList.remove('on');bar.classList.remove('focus');cells.forEach(x=>x.classList.remove('hl'));pause(false)});
+bar.addEventListener('click',e=>{const c=e.target.closest('.c');if(c&&c.dataset.id&&P.find(x=>x.id===c.dataset.id))goTo(c.dataset.id)});
+function goTo(id){const top=live().find(t=>t.id===id||kidsOf(t).some(k=>k.id===id));if(!top)return;const doIt=()=>{const tops=live().filter(p=>!p.lock).sort((a,b)=>b.ram-a.ram);view=top.id!==id?{app:top.id}:tops.slice(0,5).includes(top)?'top':'all';buildList();const el=list.querySelector(`[data-id="${top.id!==id&&view.app?id:top.id}"]`);if(el){el.classList.add('hl');setTimeout(()=>el.scrollIntoView({block:'nearest'}),300)}pause(true)};if(level<2){setLevel(2);setTimeout(doIt,420)}else doIt()}
+$('#tipGo').addEventListener('click',e=>{e.stopPropagation();goTo(e.currentTarget.dataset.id)});
+tipEl.addEventListener('click',e=>{if(plan||e.target.closest('#plan,.ta'))return;tipEl.classList.toggle('open')});
+new ResizeObserver(fitTick).observe(tk);if(document.fonts)document.fonts.ready.then(fitTick);
+
+/* 列表：展开、打开文件夹、按住结束（那几格一格格熄灭） */
+list.addEventListener('click',e=>{const pb=e.target.closest('.parts');if(pb){if(e.target.closest('[data-a]'))return;if(e.target.closest('.cat.vo')){const k=e.target.closest('.cat.vo').dataset.k;pb.dataset.hint=pb.dataset.hint===k?'':k;renderParts(pb);kick()}return}const r=e.target.closest('.row');if(!r)return;const a=e.target.closest('[data-a]');
+ if(a){const act=a.dataset.a;if(act==='dir'){const pp=find(r.dataset.id);if(LIVE&&pp&&pp.exe)TAURI.opener.revealItemInDir(pp.exe).catch(()=>{});const t=a.textContent;a.textContent='✓';setTimeout(()=>a.textContent=t,900)}else if(act==='parts'||act==='tools'){const box=a.nextElementSibling;box.hidden=!box.hidden;a.classList.toggle('on',!box.hidden);if(act==='parts'&&!box.hidden)fillParts(r);kick()}return}
+ const cl=e.target.closest('.cln');if(cl){cl.parentElement.classList.toggle('open');kick();return}if(!e.target.closest('.ln'))return;
+ openId=openId===r.dataset.id?null:r.dataset.id;list.querySelectorAll('.row').forEach(x=>x.classList.toggle('open',x.dataset.id===openId));pause(!!openId);kick()});
+let hold=null;
+list.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-a="kill"]');if(!b)return;const id=b.closest('[data-id]').dataset.id;const mine=cells.filter(c=>c.dataset.id===id);const orig=b.querySelector('span').textContent;b.classList.add('down');b.querySelector('span').textContent=L('holding');
+ const t0=performance.now();hold={b,id,mine,raf:0,orig};(function step(t){const p=Math.min(1,(t-t0)/1100);b.style.setProperty('--p',p);const k=Math.ceil(mine.length*p);mine.forEach((c,i)=>c.classList.toggle('drain',i>=mine.length-k));if(p<1){hold.raf=requestAnimationFrame(step)}else finish()})(t0)});
+function cancelHold(){if(!hold)return;cancelAnimationFrame(hold.raf);hold.b.classList.remove('down');hold.b.style.setProperty('--p',0);hold.b.querySelector('span').textContent=hold.orig;hold.mine.forEach(c=>c.classList.remove('drain'));hold=null}
+['pointerup','pointercancel'].forEach(t=>list.addEventListener(t,e=>{if(hold)cancelHold()},true));
+list.addEventListener('pointerleave',e=>{if(hold&&e.target===hold.b)cancelHold()},true);
+function finish(){const {id,mine}=hold;hold=null;const orph=id==='_orph'?flat().filter(x=>x.flag&&live().includes(x)):null,p=orph?{ram:orph.reduce((a,x)=>a+x.ram,0),pids:orph.flatMap(x=>x.pids||[])}:find(id);if(!p)return;if(orph)orph.forEach(x=>dead.add(x.id));if(LIVE&&p){const ch=p.chat?[p]:kidsOf(p).filter(k=>k.chat),pl=p.chat?[]:[p,...kidsOf(p).filter(k=>!k.chat)].flatMap(x=>x.pids||[]);Promise.all([ch.length?TAURI.core.invoke('kill_tree',{pids:ch.flatMap(k=>k.killPids)}):0,pl.length?TAURI.core.invoke('kill',{pids:pl}):0]).then(()=>setTimeout(pull,1800)).catch(()=>{})}const r=list.querySelector(`[data-id="${id}"]`);dead.add(id);if(r&&r.classList.contains('row'))openId=null;
+ r.innerHTML=`<div class="done">${L('ended')(sz(p.ram))}</div>`;mine.forEach(c=>{c.classList.remove('drain');c.style.background='';c.classList.remove('lit')});texts();
+ setTimeout(()=>{r.classList.add('gone');setTimeout(()=>{assign();paintCells(CELLS,true);buildList();pause(false)},380)},1300)}
+
+/* 一个程序好多进程：点开看分类（它自己的窗口 / 页面 / 主程序 / 小帮手），只看；AI 对话在清单的「AI 对话」里 */
+const KIND_ORDER=['win','page','main','helper'];
+function fakeParts(p){if(p.id!=='claude')return {parts:[]};return {parts:[{kind:'win',n:3,ram:1.5},{kind:'page',n:28,ram:.33},{kind:'main',n:1,ram:.65},{kind:'helper',n:9,ram:.64}]}}
+const getParts=p=>LIVE?TAURI.core.invoke('group_parts',{pids:p.pids}):Promise.resolve(fakeParts(p));
+async function fillParts(r){if(!r)return;const box=r.querySelector('.parts');if(!box||box.dataset.done)return;const p=find(r.dataset.id);if(!p||p.n<2)return;
+ box.dataset.done=1;const d=await getParts(p).catch(()=>null);if(!d||!d.parts.length)return;box._d=d;renderParts(box);kick()}
+function idleText(c){if(c.idle_min<1)return {t:L('busyNow'),live:true};const h=Math.floor(c.idle_min/60),v=h?L('hrs')(h):L('mins')(c.idle_min);return {t:c.idle_min>=c.watched_min?L('idleAtLeast')(v):L('idleFor')(v),live:false}}
+function renderParts(box){const d=box._d,hk=box.dataset.hint||'';
+ box.innerHTML=d.parts.filter(x=>x.n>0).sort((a,b)=>KIND_ORDER.indexOf(a.kind)-KIND_ORDER.indexOf(b.kind)).map(x=>`<div class="cat vo" data-k="${x.kind}"><span>${L('kind')[x.kind]}</span><span class="n">${x.n>1?'×'+x.n+' · ':''}${sz(x.ram)}</span><span class="look">${L('viewOnly')} ?</span></div>`+(x.kind===hk?`<div class="warn hint">${L('hint')[x.kind]}</div>`:'')).join('')}
+let ih=null;
+list.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-a="killi"]');if(!b)return;const line=b.closest('[data-i]'),row=b.closest('[data-id]'),orig=b.querySelector('span').textContent;b.classList.add('down');b.querySelector('span').textContent=L('holding');const t0=performance.now();ih={b,orig,raf:0};
+ (function step(t){if(!ih)return;const p=Math.min(1,(t-t0)/1100);b.style.setProperty('--p',p);if(p<1){ih.raf=requestAnimationFrame(step)}else{ih=null;endItem(row,line)}})(t0)});
+const stopIh=e=>{if(!ih||(e.type==='pointerleave'&&e.target!==ih.b))return;cancelAnimationFrame(ih.raf);ih.b.classList.remove('down');ih.b.style.setProperty('--p',0);ih.b.querySelector('span').textContent=ih.orig;ih=null};
+['pointerup','pointercancel','pointerleave'].forEach(t=>list.addEventListener(t,stopIh,true));
+async function endItem(row,line){const p=find(row.dataset.id),x=p&&p.chat.items[+line.dataset.i];if(!x)return;if(LIVE)await TAURI.core.invoke('kill_tree',{pids:x.pids}).catch(()=>{});
+ line.outerHTML=`<div class="done">${L('ended')(sz(x.ram))}</div>`;setTimeout(()=>{if(LIVE)pull()},1500)}
+
+/* 暂停 / 刷新 */
+function pause(p){paused=p;$('#ftT').textContent=p?L('paused'):L('live')}
+panel.addEventListener('mouseenter',()=>pause(true));panel.addEventListener('mouseleave',()=>{if(!openId)pause(false)});
+setInterval(()=>{if(LIVE)return pull();hist.push(used()+Math.random()*.25-.12);if(hist.length>40)hist.shift();drawWave();if(paused)return;P.forEach(p=>{p.ram=Math.max(.05,p.ram*(1+(Math.random()-.5)*.06))});assign();if(state==='open')paintCells(CELLS);texts();list.querySelectorAll('.row').forEach(r=>{const p=P.find(x=>x.id===r.dataset.id);const v=r.querySelector('.v');if(p&&v)v.innerHTML=vu(p.ram)})},3000);
+
+/* 桌面版：真数据（Rust 每 3 秒读一次）+ 窗口跟着开合变高 + 拖动 + 透明处点穿 */
+const TAURI=window.__TAURI__,LIVE=!!(TAURI&&TAURI.core);let dragged=false;const HOST={grow(){},shrink(){},hit(){}};
+function scaleLbl(){$('.scale').innerHTML=[0,.25,.5,.75].map(k=>`<span>${Math.round(RAM*k)}</span>`).join('')+`<span>${(+RAM).toFixed(1)} GB</span>`}
+function sinceText(sec){const d=new Date(sec*1000),t=d.toTimeString().slice(0,5),today=d.toDateString()===new Date().toDateString();const yd=new Date(Date.now()-864e5).toDateString()===d.toDateString();return today?{en:`today ${t}`,zh:`今天 ${t}`}:yd?{en:`yesterday ${t}`,zh:`昨天 ${t}`}:{en:`${d.getMonth()+1}/${d.getDate()} ${t}`,zh:`${d.getMonth()+1} 月 ${d.getDate()} 日 ${t}`}}
+function whyText(g){const w=g.why||[],get=k=>(w.find(x=>x.k===k)||{}).v,parts=[];
+ const ag=get('agent')||'AI';if(get('appOf'))parts.push({en:T.en.appOf,zh:T.zh.appOf});const by=get('byAgent');if(by&&!w.some(x=>x.k==='openedBy'||x.k==='aiBrowser'))parts.push({en:T.en.byAgent(by),zh:T.zh.byAgent(by)});if(w.some(x=>x.k==='aiBrowser'))parts.push({en:`a browser ${ag} opened; the chat that opened it is gone`,zh:`${ag} 开的浏览器，开它的对话已经停了`});else if(!by&&w.some(x=>x.k==='ownerGone'))parts.push({en:'the program that started it is gone',zh:'打开它的程序已经没了'});
+ const ob=w.find(x=>x.k==='openedBy');if(ob){const dir=ob.v.startsWith('dir:')?ob.v.slice(4):'';parts.push(dir?{en:`opened by a ${ag} chat in “${dir}”`,zh:`是 ${ag} 在「${dir}」里的对话开的`}:ob.v?{en:`opened by the ${ag} chat “${ob.v}”`,zh:`是 ${ag} 对话「${ob.v}」开的`}:{en:`opened by a ${ag} chat`,zh:`是一个 ${ag} 对话开的`})}
+ const pc=get('perConv');if(pc)parts.push({en:`${pc} copies, one per AI chat — close finished chats and these go too`,zh:`其中 ${pc} 份是 AI 对话各开的一份：关掉用完的对话，这些会一起少掉`});
+ const ow=get('owner');if(ow)parts.push({en:`started by ${ow}`,zh:`由 ${ow} 打开`});
+ const port=get('port');if(port)parts.push({en:`port ${port}`,zh:`开着端口 ${port}`});
+ const idle=get('idle');if(idle)parts.push({en:`nobody connected for ${idle} min`,zh:`${idle} 分钟没人连过`});
+ if(!parts.length)parts.push({en:`${g.n} process${g.n>1?'es':''}`,zh:`${g.n} 个进程`});
+ return {en:parts.map(x=>x.en).join(' · '),zh:parts.map(x=>x.zh).join(' · ')}}
+const ids=a=>a.map(x=>x.id).sort().join();
+async function pull(){try{const s=await TAURI.core.invoke('snapshot');RAM=s.total;USED=s.used;COMMIT=s.commit_used;LIMIT=s.commit_limit;
+ hist.push(USED);while(hist.length>40)hist.shift();if(paused||hold){drawWave();return}
+ const plain=n=>n.replace(/^(Python|Node\.js) :(\d+)$/,'网页预览 :$2');
+ const next=s.groups.filter((g,i)=>i<7||g.score>=2||g.why.some(x=>x.k==='perConv')).map(g=>({perConv:+((g.why.find(x=>x.k==='perConv')||{}).v||0),id:g.id,en:g.name_en||g.name,zh:plain(g.name),n:g.n,ram:g.ram,vm:g.vm,pids:g.pids,exe:g.exe,sys:g.sys,
+  flag:g.score>=3?{en:'orphaned',zh:'没人管'}:null,maybe:g.score===2,who:whyText(g),since:sinceText(g.since),appOf:(g.why.find(x=>x.k==='appOf')||{}).v,byAgent:(g.why.find(x=>x.k==='byAgent')||{}).v,conv:g.conv,link:g.link,title:g.title,port:g.port}));
+ const flatNext=[...next,...(s.chats||[]).map(chatP)];SYS=Math.max(0,(s.sys_ram||0)-flatNext.filter(x=>x.sys).reduce((a,x)=>a+x.ram,0));OTHER=Math.max(0,USED-flatNext.reduce((a,x)=>a+x.ram,0)-SYS);
+ const tree=nest(flatNext),same=ids(tree)===ids(P)&&!flatNext.some(p=>p.chat);P=tree;dead.clear();
+ assign();if(state==='open')paintCells(CELLS);texts();scaleLbl();
+ if(same)list.querySelectorAll('.row').forEach(r=>{const p=P.find(x=>x.id===r.dataset.id),v=r.querySelector('.v');if(p&&v)v.innerHTML=vu(p.ram)});else if(!openId)buildList()}catch(e){console.error(e)}}
+if(LIVE){document.body.classList.add('app');const W=TAURI.window,D=TAURI.dpi||W,win=W.getCurrentWindow(),WW=400,MINH=90;
+ const setH=h=>win.setSize(new D.LogicalSize(WW,h)).catch(()=>{});
+ HOST.grow=()=>setH(Math.max(MINH,Math.min(1000,screen.availHeight-24)));HOST.shrink=()=>setH(MINH);setH(MINH);
+ // 放在屏幕下方、往下展开放不下时：先往上挪到放得下，收起后再挪回原处（还是往下展开）
+ let homeY=null,moving=false;const NEED=740;
+ HOST.grow=async()=>{await where();const top=screen.availTop||0,bottom=top+screen.availHeight;let y=wp.y;if(y+NEED>bottom&&homeY===null){homeY=y;moving=true;y=Math.max(top,bottom-NEED);await win.setPosition(new D.LogicalPosition(Math.round(wp.x),Math.round(y))).catch(()=>{});setTimeout(()=>{moving=false;where()},500)}setH(Math.max(MINH,Math.min(1000,bottom-y-8)))};
+ HOST.shrink=async()=>{setH(MINH);if(homeY!==null){moving=true;await win.setPosition(new D.LogicalPosition(Math.round(wp.x),Math.round(homeY))).catch(()=>{});homeY=null;setTimeout(()=>{moving=false;where()},500)}};
+ try{const sp=JSON.parse(load('pos')||'null');if(sp&&sp.x>-300&&sp.y>-40)win.setPosition(new D.LogicalPosition(sp.x,sp.y)).catch(()=>{})}catch(e){}
+ let sf=1,wp={x:0,y:0};const where=async()=>{try{sf=await win.scaleFactor();wp=(await win.outerPosition()).toLogical(sf)}catch(e){}};where();
+ let mt=0;win.onMoved(()=>{dragLock=dragLock&&Date.now();if(moving)return;clearTimeout(mt);mt=setTimeout(async()=>{await where();save('pos',JSON.stringify({x:Math.round(wp.x),y:Math.round(wp.y)}))},300)});
+ // 按住机身拖：移动超过 4px 才算拖，不然算点
+ let dd=null;const zone=t=>state==='mini'?dev.contains(t):!!t.closest('#hd')&&!t.closest('button');
+ document.addEventListener('pointerdown',e=>{if(e.button===0&&zone(e.target))dd={x:e.screenX,y:e.screenY}},true);
+ let dragLock=0;document.addEventListener('pointermove',e=>{if(dd&&Math.hypot(e.screenX-dd.x,e.screenY-dd.y)>4){dd=null;dragged=true;dragLock=Date.now();setTimeout(()=>{dragged=false},400);win.startDragging().catch(()=>{})}},true);
+ document.addEventListener('pointerup',()=>{dd=null},true);
+ // 透明的地方让鼠标点穿到下面的窗口
+ let lastHit='';HOST.hit=()=>{const r=dev.getBoundingClientRect(),k=[r.left,r.top,r.width,r.height].map(Math.round).join();if(k!==lastHit){lastHit=k;TAURI.core.invoke('set_hit',{x:r.left,y:r.top,w:r.width,h:r.height}).catch(()=>{})}};
+ let gT=0;TAURI.event.listen('guard',e=>{const g=e.payload;alarm=g.level>0;document.body.classList.toggle('alarm',alarm);
+  if(g.stopped){guardMsg=L('guardStop')(g.stopped,g.conv,sz(g.freed),g.agent);clearTimeout(gT);gT=setTimeout(()=>{gT=0;guardMsg='';texts();kick()},20000)}
+  else if(g.level>0)guardMsg=L('guardWarn')(g.avail.toFixed(1),g.eta?Math.round(g.eta):0,g.who)+(g.level===2&&g.who&&!g.ai?' · '+L('guardMine'):'');
+  else if(!gT)guardMsg='';
+  texts();kick()});
+ TAURI.event.listen('toggle-panel',()=>{state==='mini'||state==='closing'?setLevel(1):doClose()});
+ window.addEventListener('blur',()=>{if(Date.now()-dragLock<1500)return;if(state!=='mini'&&state!=='closing')doClose()}); // 刚拖过不算点别处
+}
+
+/* 开场：默认白色 + 英文 + 规则；记住上次选的（Key 不记）；网址参数用来拍照 */
+const q=new URLSearchParams(location.search);
+document.body.dataset.m=q.get('m')||load('skin')||'w';
+lang=q.get('lang')||load('lang')||((navigator.language||'').toLowerCase().startsWith('zh')?'zh':'en');if(LIVE&&!q.get('lang')&&!load('lang'))TAURI.core.invoke('sys_lang').then(v=>{if(String(v).toLowerCase().startsWith('zh')&&lang!=='zh')setLang('zh')}).catch(()=>{});document.documentElement.lang=lang==='en'?'en':'zh-CN';
+ai=q.get('ai')||load('ai')||'off';loadApi();showKey();pinLong=(q.get('size')||load('size'))==='l';guardMode=load('guard')||'auto';if(LIVE)TAURI.core.invoke('set_guard',{auto:guardMode==='auto'}).catch(()=>{});MW=pinLong?LONGW:MINI.w;
+assign();setType('claude');setAI(ai);buildList();syncSeg();apply();if(LIVE){P=[];pull()}
+if(q.get('set')){set.style.transition='none';set.querySelectorAll('.setIn>*').forEach(el=>el.style.transition='none');$('#apiF').style.transition='none';openSet(true)}
+if(q.get('key')){$('#fKey').value='sk-demo-0000';fillModels(API[apiType].models);msg(L('works')(1.3),'ok')}
+if(q.get('open')){state='open';dev.classList.add('open');document.querySelectorAll('.row,#bar .c').forEach(el=>{el.style.transition='none'});level=q.get('mode')==='detail'?2:1;hint();if(q.get('row')){openId=q.get('row');pause(true)}buildList();list.querySelectorAll('.row,.more').forEach(el=>{el.style.transition='none'});H=tH();apply();paintCells(CELLS)}
+if(q.get('peek')){hovering=true;H=restH();apply()}
+if(q.get('tip')){tipEl.classList.add('open')}
+window.__demo={setLevel,doClose,goTo,setLang,setSkin,setAI,openSet,kick,dbg:()=>({H,level,raf,state,ai,s:hS(),d:dH()})};
+})();
+</script>
+</body>
+</html>
