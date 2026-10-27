@@ -1,9 +1,9 @@
-# 内存喵 RAMeow
+# 内存喵 RAMiao
 
 **一个 Windows 上的小小内存挂件：它知道哪个 AI 对话开了什么。**
 Claude Code、Codex、Gemini CLI 这些 AI 干活时，会开浏览器、网页预览、各种小帮手，很多在对话停了以后还一直开着。内存喵待在屏幕顶上，把每个程序挂到开它的那个对话下面，把没人管的挑出来，按住就能结束。
 
-[English](README.md) · [下载 Windows 版](https://github.com/Miaomiaomeowmeow/rameow/releases/latest)
+[English](README.md) · [下载 Windows 版](https://github.com/Miaomiaomeowmeow/ramiao/releases/latest)
 
 > **作者正在找工作！** 有机会的话欢迎看看 [我的个人网站](https://miaomiaoyang.com)，或者在 [领英](https://www.linkedin.com/in/miaomiao-yang-331901383) 找我 · 小红书 @羊猫猫不是猫 · [更多](#联系)
 
@@ -26,7 +26,7 @@ Claude Code、Codex、Gemini CLI 这些 AI 干活时，会开浏览器、网页�
 
 ## 安装
 
-1. 到 [Releases](https://github.com/Miaomiaomeowmeow/rameow/releases/latest) 下载 `RAMeow_x.y.z_x64-setup.exe`，双击安装。
+1. 到 [Releases](https://github.com/Miaomiaomeowmeow/ramiao/releases/latest) 下载 `RAMiao_x.y.z_x64-setup.exe`，双击安装。
 2. Windows 可能提示“Windows 已保护你的电脑”，因为安装包没有做数字签名（签名要花钱）。点 **更多信息 → 仍要运行**。
 3. 屏幕顶上会出现一个写着百分比的小方块，可以拖到任何地方。`Ctrl + Shift + M` 打开 / 收起面板；右下角托盘图标可以藏起来或退出。
 
@@ -40,7 +40,7 @@ Claude Code、Codex、Gemini CLI 这些 AI 干活时，会开浏览器、网页�
 
 ### 自己加一个
 
-一个工具的全部信息就是 [`src-tauri/agents.json`](src-tauri/agents.json) 里的一行。照同样的格式写一份，放到 `%APPDATA%\com.miaomiao.rameow\agents.json`，重开内存喵就行；`id` 一样的会换掉内置那一行。各个字段的意思见 [英文 README](README.md#add-one-yourself)。
+一个工具的全部信息就是 [`src-tauri/agents.json`](src-tauri/agents.json) 里的一行。照同样的格式写一份，放到 `%APPDATA%\com.miaomiao.ramiao\agents.json`，重开内存喵就行；`id` 一样的会换掉内置那一行。各个字段的意思见 [英文 README](README.md#add-one-yourself)。
 
 ## 隐私
 

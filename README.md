@@ -1,9 +1,9 @@
-# RAMeow 内存喵
+# RAMiao 内存喵
 
 **A tiny memory widget for Windows that knows which AI chat opened what.**
-Claude Code, Codex, Gemini CLI and friends open browsers, page previews and helper programs as they work, and many of those keep running after the chat stops. RAMeow sits at the top of your screen, groups every program under the AI chat that opened it, points out the ones nobody is minding, and lets you end them with a press-and-hold.
+Claude Code, Codex, Gemini CLI and friends open browsers, page previews and helper programs as they work, and many of those keep running after the chat stops. RAMiao sits at the top of your screen, groups every program under the AI chat that opened it, points out the ones nobody is minding, and lets you end them with a press-and-hold.
 
-[中文说明](README.zh-CN.md) · [Download for Windows](https://github.com/Miaomiaomeowmeow/rameow/releases/latest)
+[中文说明](README.zh-CN.md) · [Download for Windows](https://github.com/Miaomiaomeowmeow/ramiao/releases/latest)
 
 > **The author is looking for a job!** If you have an opportunity, see [my website](https://miaomiaoyang.com) or reach out on [LinkedIn](https://www.linkedin.com/in/miaomiao-yang-331901383) · Xiaohongshu (RedNote) @羊猫猫不是猫 · [more](#contact)
 
@@ -16,17 +16,17 @@ Claude Code, Codex, Gemini CLI and friends open browsers, page previews and help
 ## What it does
 
 - **Sorted the way you think, by chat.** Your AI app (Claude, Codex…) is one row; click it and every chat is listed by the name you gave it in the app, with the browser, page preview or Blender it opened right under it.
-- **Knows who opened what, even after the chat stopped.** AI tools leave a small marker on everything they start. RAMeow reads only those marker names, so a page preview from a chat you closed yesterday still says *“opened by ‘Fix the website footer’, that chat has stopped”*.
+- **Knows who opened what, even after the chat stopped.** AI tools leave a small marker on everything they start. RAMiao reads only those marker names, so a page preview from a chat you closed yesterday still says *“opened by ‘Fix the website footer’, that chat has stopped”*.
 - **Nobody minding?** Leftovers (page previews with no owner, helpers that were never closed) are listed on top in orange. Hover a row, press and hold **Hold to end**.
 - **↗ Go** jumps to the chat in the Claude app or the Codex app, brings a window to the front, or opens a page preview in your browser.
 - **Symbols instead of labels:** ↻ the chat can continue after you end it · ⊘ only what it opened can be closed here · ◌ runs in the background, no window. For your first five opens the words are shown next to them; the **?** explains them, along with what ending each kind of thing does.
 - **Watchdog.** If free memory really runs out (under 1 GB), it stops the fastest-growing thing *an AI* opened so your computer does not freeze. Programs you opened yourself are never stopped. You can switch it to *Warn only*.
-- **Ask an AI (optional).** Borrow the Codex or Claude Code you are already signed in to (no key needed), or use your own API key (Claude or any OpenAI-compatible provider). It only sends program names and sizes, and only when you tap **Ask AI**. The AI only suggests; RAMeow does the ending, and only after you hold to accept.
+- **Ask an AI (optional).** Borrow the Codex or Claude Code you are already signed in to (no key needed), or use your own API key (Claude or any OpenAI-compatible provider). It only sends program names and sizes, and only when you tap **Ask AI**. The AI only suggests; RAMiao does the ending, and only after you hold to accept.
 - English / 中文, a light and a graphite look, short or long resting size.
 
 ## Install
 
-1. Download `RAMeow_x.y.z_x64-setup.exe` from [Releases](https://github.com/Miaomiaomeowmeow/rameow/releases/latest) and run it.
+1. Download `RAMiao_x.y.z_x64-setup.exe` from [Releases](https://github.com/Miaomiaomeowmeow/ramiao/releases/latest) and run it.
 2. Windows may say *“Windows protected your PC”* because the installer is not code-signed (signing costs money). Click **More info → Run anyway**.
 3. A small box with a percentage appears at the top of your screen. Drag it anywhere. `Ctrl + Shift + M` opens or closes the panel; the tray icon hides it or quits.
 
@@ -38,7 +38,7 @@ Built in: **Claude Code** (the Claude app and the terminal), **Codex** (the Code
 
 ### Add one yourself
 
-Everything about a tool lives in one line of [`src-tauri/agents.json`](src-tauri/agents.json). Put a file with the same format at `%APPDATA%\com.miaomiao.rameow\agents.json` and restart; a line with the same `id` replaces the built-in one.
+Everything about a tool lives in one line of [`src-tauri/agents.json`](src-tauri/agents.json). Put a file with the same format at `%APPDATA%\com.miaomiao.ramiao\agents.json` and restart; a line with the same `id` replaces the built-in one.
 
 | Field | What it says |
 |---|---|
@@ -53,9 +53,9 @@ Everything about a tool lives in one line of [`src-tauri/agents.json`](src-tauri
 
 ## Privacy
 
-- RAMeow reads **only the variable names listed in `agents.json`** from other programs; nothing else from their environment.
+- RAMiao reads **only the variable names listed in `agents.json`** from other programs; nothing else from their environment.
 - Nothing leaves your computer unless you choose an AI and tap **Ask AI**. Then it sends program names and memory sizes, not files and not window titles.
-- An API key is stored only inside RAMeow on this computer and goes only to the provider you chose.
+- An API key is stored only inside RAMiao on this computer and goes only to the provider you chose.
 
 ## Build from source
 

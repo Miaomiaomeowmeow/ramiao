@@ -1,4 +1,4 @@
-// RAMeow 内存喵 — by Miaomiao (github.com/Miaomiaomeowmeow) · CC BY-NC-SA 4.0
+// RAMiao 内存喵 — by Miaomiao (github.com/Miaomiaomeowmeow) · CC BY-NC-SA 4.0
 // 内存看板桌面版：读真实内存 + 规则层找“没人管”的网页服务 + 托盘 / 快捷键 / 开机启动
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -1684,7 +1684,7 @@ fn run_codex(prompt: &str) -> Result<String, String> {
     use std::io::Write;
     use std::process::{Command, Stdio};
     let exe = find_codex().ok_or("notfound")?;
-    let dir = std::env::temp_dir().join("rameow-ask");
+    let dir = std::env::temp_dir().join("ramiao-ask");
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let stamp = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
     let out = dir.join(format!("answer-{stamp}.txt"));
@@ -1760,7 +1760,7 @@ fn run_claude(prompt: &str) -> Result<String, String> {
     use std::io::{Read, Write};
     use std::process::{Command, Stdio};
     let exe = find_claude().ok_or("notfound")?;
-    let dir = std::env::temp_dir().join("rameow-ask");
+    let dir = std::env::temp_dir().join("ramiao-ask");
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let mut cmd = Command::new(&exe);
     cmd.args(["-p", "--output-format", "text", "--no-session-persistence", "--tools", "", "--strict-mcp-config"])
@@ -1848,7 +1848,7 @@ fn toggle_win(app: &AppHandle) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // 测试用：rameow.exe --dump 文件  → 把看到的数据（含每个对话开了什么）写进文件就退出，不开窗口
+    // 测试用：ramiao.exe --dump 文件  → 把看到的数据（含每个对话开了什么）写进文件就退出，不开窗口
     let args: Vec<String> = std::env::args().collect();
     if let Some(i) = args.iter().position(|a| a == "--dump") {
         let mut w = Watch { sys: System::new_all(), first_seen: HashMap::new(), last_conn: HashMap::new(), cc_busy: HashMap::new(), who: HashMap::new() };

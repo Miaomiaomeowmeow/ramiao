@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "RAMeow",
+  "productName": "RAMiao",
   "version": "0.1.0",
-  "identifier": "com.miaomiao.rameow",
+  "identifier": "com.miaomiao.ramiao",
   "build": {
     "frontendDist": "../src"
   },
@@ -11,7 +11,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "RAMeow",
+        "title": "RAMiao",
         "width": 400,
         "height": 90,
         "transparent": true,

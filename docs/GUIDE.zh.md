@@ -1,4 +1,4 @@
-# 内存喵 RAMeow · 使用说明
+# 内存喵 RAMiao · 使用说明
 
 一个待在屏幕顶上的小方块：一眼看到内存用了多少，点开看是谁在占，还会提醒你哪些程序开着没人管。
 
@@ -221,7 +221,7 @@
 
 **认出是哪个对话、能跳过去**：各家 AI 会在自己开的程序身上留下对话编号，对话关了也还在。小方块拿编号去那家 AI 自己的对话记录里查名字，再用那家 App 自己的链接跳过去（Claude App：`claude://claude.ai/epitaxy/编号`；Codex：`codex://threads/编号`，官方说明里写着）。没有链接的 AI，就把它所在的窗口叫到前面。
 
-**想自己加一个**：把 `agents.json`（程序文件夹 `src-tauri/agents.json` 里有样子）照格式写一份，放到 `%APPDATA%\com.miaomiao.rameow\agents.json`，重开小方块。同名（`id` 一样）的会换掉内置那行。
+**想自己加一个**：把 `agents.json`（程序文件夹 `src-tauri/agents.json` 里有样子）照格式写一份，放到 `%APPDATA%\com.miaomiao.ramiao\agents.json`，重开小方块。同名（`id` 一样）的会换掉内置那行。
 
 ---
 

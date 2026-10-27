@@ -1,7 +1,7 @@
 [package]
-name = "rameow"
+name = "ramiao"
 version = "0.1.0"
-description = "RAMeow: a tiny memory widget that knows which AI chat opened what"
+description = "RAMiao: a tiny memory widget that knows which AI chat opened what"
 authors = ["Miaomiao"]
 edition = "2024"
 
@@ -11,7 +11,7 @@ edition = "2024"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "rameow_lib"
+name = "ramiao_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
