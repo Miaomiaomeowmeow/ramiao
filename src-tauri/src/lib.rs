@@ -1918,7 +1918,7 @@ pub fn run() {
             let menu = Menu::with_items(app, &[&toggle, &auto, &quit])?;
             TrayIconBuilder::with_id("main")
                 .icon(app.default_window_icon().unwrap().clone())
-                .tooltip("Memory")
+                .tooltip("内存喵 RAMiao")
                 .menu(&menu)
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, e| match e.id().as_ref() {
